@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -91,6 +92,8 @@ public class HelloController {
           System.out.println("Account found: " + data.toString());
           accountFound = true;
           // open login view
+          openLogInView(null, data[2]);
+          break;
         } else { // account not found
           System.out.println("Account does not match");
         }
@@ -109,7 +112,7 @@ public class HelloController {
     try {
       FileWriter writer = new FileWriter(this.database, true);
       writer.write("Email" + "," + "Password" + "," + "Name" + "\n"); // write header
-      writer.write(email + "," + password + "," + name + "\n"); // write data
+      writer.write(email + "," + password + "," + encrypt(name)  + "\n"); // write data
       writer.close();
       System.out.println(
         "File created with: " + email + "," + password + "," + name
@@ -126,7 +129,7 @@ public class HelloController {
     if (Files.exists(Paths.get(this.database))) { // check if file exists
       System.out.println("File exists");
       try (FileWriter writer = new FileWriter(this.database, true)) { // write to file
-        writer.write(email + "," + password + "," + name + "\n");
+        writer.write(email + "," + password + "," + encrypt(name) + "\n");
         System.out.println(
           "Account created with: " + email + "," + password + "," + name
         );
@@ -214,5 +217,26 @@ public class HelloController {
     stage.close(); // close sign up view when done
   }
   ///////////////////////////////////// SIGN UP /////////////////////////////////////
+  ///////////////////////////////////// LOG IN /////////////////////////////////////
+
+  private void openLogInView(ActionEvent event, String name) { // open login view
+    System.out.println("Opening Log In View");
+    System.out.println("Name: " + name);
+    try {
+      FXMLLoader loader = new FXMLLoader(
+        getClass().getResource("logIn-view.fxml")
+      );
+      Stage stage = new Stage();
+      stage.setScene(new Scene(loader.load()));
+      stage.setTitle("Log In");
+      Label nameLabel = (Label) loader.getNamespace().get("nameLabel");
+      nameLabel.setText(decrypt(name));
+      stage.show();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  ///////////////////////////////////// LOG IN /////////////////////////////////////
 
 }
