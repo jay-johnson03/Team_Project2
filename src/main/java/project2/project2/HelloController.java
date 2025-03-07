@@ -93,7 +93,7 @@ public class HelloController {
     } catch (FileNotFoundException e) {
       System.out.println("File not found");
       promptSignUp(null);
-        popUp("Account not found, please sign up");
+      popUp("Account not found, please sign up");
     } catch (Exception e) {
       e.printStackTrace();
       // error pop up
@@ -118,14 +118,40 @@ public class HelloController {
     System.out.println("Creating account");
     if (Files.exists(Paths.get(this.database))) { // check if file exists
       System.out.println("File exists");
-      try (FileWriter writer = new FileWriter(this.database, true)) { // write to file
-        writer.write(email + "," + password + "," + encrypt(name) + "\n");
-        System.out.println(
-          "Account created with: " + email + "," + password + "," + name
-        );
+
+      System.out.println("checking if account exists");
+      Boolean accountExists = false;
+      String line;
+      String[] data;
+      try (
+        BufferedReader reader = new BufferedReader(
+          new FileReader(this.database)
+        )
+      ) {
+        reader.readLine();
+        while ((line = reader.readLine()) != null) {
+          data = line.split(",");
+          if (decrypt(data[0]).equals(decrypt(email))) {
+            accountExists = true;
+          }
+        }
       } catch (Exception e) {
         e.printStackTrace();
-        // error pop up
+      }
+
+      if (!accountExists) {
+        System.out.println(accountExists);
+        try (FileWriter writer = new FileWriter(this.database, true)) { // write to file
+          writer.write(email + "," + password + "," + encrypt(name) + "\n");
+          System.out.println(
+            "Account created with: " + email + "," + password + "," + name
+          );
+        } catch (Exception e) {
+          e.printStackTrace();
+          // error pop up
+        }
+      } else {
+        popUp("Account already exists");
       }
     } else { // file does not exist
       System.out.println("File does not exist");
@@ -152,7 +178,7 @@ public class HelloController {
   }
 
   private String decrypt(String string) {
-    // System.out.println("Decrypting: " + string);
+    System.out.println("Decrypting: " + string);
     try {
       SecretKeySpec key = new SecretKeySpec(SECRET_KEY.getBytes(), AES); // create secret key with secret key and
       // algorithm
