@@ -15,4 +15,6 @@
 
     <Label text="Hello,"/>
     <Label fx:id="nameLabel" text=" "/>
+    <Button text="Close" fx:id="close" onAction="#close"/>
+
 </VBox>

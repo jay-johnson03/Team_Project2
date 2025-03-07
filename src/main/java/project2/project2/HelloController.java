@@ -11,6 +11,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -30,6 +33,9 @@ public class HelloController {
   @FXML
   private TextField nameField;
 
+  @FXML
+  private Button close;
+
   private static final String AES = "AES"; // encryption algorithm
   private static final String SECRET_KEY = "verysecretkeymhm"; // secret key
 
@@ -42,23 +48,8 @@ public class HelloController {
     String encryptedEmail = encrypt(email); // update this
     String salt = BCrypt.gensalt();
     String hashedPassword = BCrypt.hashpw(password, salt);
-    String decryptedEmail = decrypt(encryptedEmail);
-
-    // debug
-    // System.out.println(email);
-    // System.out.println(encryptedEmail);
-    // System.out.println(decryptedEmail);
-    System.out.println(password);
-    System.out.println(hashedPassword);
-    // System.out.println(salt);
-    boolean passwordMatches = BCrypt.checkpw(password, hashedPassword);
-    System.out.println(passwordMatches);
     /*
-     * 121212
-     * 232323
      * $2a$10$5t1hFMY5JxN7pzUBCtukgO07wrnoTgNHlEow51yrgLvUYS/WkIV8K
-     * $2a$10$5t1hFMY5JxN7pzUBCtukgO
-     * true
      *
      * $2a$ is the version of the algorithm
      * 10$ is the cost factor, eg. 2^10 iterations
@@ -81,10 +72,6 @@ public class HelloController {
       while ((line = reader.readLine()) != null) { // read line by line
         String[] data = line.split(","); // split by comma
         // dencrpyt and unhash then check
-        System.out.println("Password: " + BCrypt.checkpw(password, data[1]));
-        System.out.println(
-          "Email: " + (decrypt(data[0]).equals(decrypt(email)))
-        );
         if (
           BCrypt.checkpw(password, data[1]) &&
           (decrypt(data[0]).equals(decrypt(email)))
@@ -98,9 +85,15 @@ public class HelloController {
           System.out.println("Account does not match");
         }
       }
+
       if (!accountFound) { // account not found, create account
         promptSignUp(null);
+        popUp("Account not found, please sign up");
       }
+    } catch (FileNotFoundException e) {
+      System.out.println("File not found");
+      promptSignUp(null);
+        popUp("Account not found, please sign up");
     } catch (Exception e) {
       e.printStackTrace();
       // error pop up
@@ -112,11 +105,8 @@ public class HelloController {
     try {
       FileWriter writer = new FileWriter(this.database, true);
       writer.write("Email" + "," + "Password" + "," + "Name" + "\n"); // write header
-      writer.write(email + "," + password + "," + encrypt(name)  + "\n"); // write data
+      writer.write(email + "," + password + "," + encrypt(name) + "\n"); // write data
       writer.close();
-      System.out.println(
-        "File created with: " + email + "," + password + "," + name
-      );
     } catch (Exception e) {
       e.printStackTrace();
       // error pop up
@@ -140,7 +130,6 @@ public class HelloController {
     } else { // file does not exist
       System.out.println("File does not exist");
       createFile(email, password, name);
-      // createFile(email, password, name);
     }
   }
 
@@ -149,15 +138,12 @@ public class HelloController {
   ///////////////////////////////////// ENCRYPTION /////////////////////////////////////
 
   private String encrypt(String string) {
-    // System.out.println("Encrypting: " + string);
     try {
       SecretKeySpec key = new SecretKeySpec(SECRET_KEY.getBytes(), AES); // create secret key with secret key and
       // algorithm
       Cipher cipher = Cipher.getInstance(AES); // create cipher with algorithm
       cipher.init(Cipher.ENCRYPT_MODE, key); // initialize cipher with secret key
       byte[] encryptedString = cipher.doFinal(string.getBytes()); // encrypt string
-      // System.out.println("Encrypted: " +
-      // Base64.getEncoder().encodeToString(encryptedString));
       return Base64.getEncoder().encodeToString(encryptedString); // return encrypted string, translated to string
     } catch (Exception e) {
       e.printStackTrace();
@@ -174,7 +160,6 @@ public class HelloController {
       cipher.init(Cipher.DECRYPT_MODE, key); // initialize cipher with secret key
       byte[] decodedString = Base64.getDecoder().decode(string); // decode string
       byte[] decryptedString = cipher.doFinal(decodedString); // decrypt string
-      // System.out.println("Decrypted: " + new String(decryptedString));
       return new String(decryptedString);
     } catch (Exception e) {
       e.printStackTrace();
@@ -216,6 +201,7 @@ public class HelloController {
     Stage stage = (Stage) this.emailField.getScene().getWindow();
     stage.close(); // close sign up view when done
   }
+
   ///////////////////////////////////// SIGN UP /////////////////////////////////////
   ///////////////////////////////////// LOG IN /////////////////////////////////////
 
@@ -238,5 +224,21 @@ public class HelloController {
   }
 
   ///////////////////////////////////// LOG IN /////////////////////////////////////
+
+  ///////////////////////////////////// UTILITY /////////////////////////////////////
+
+  @FXML
+  private void close(ActionEvent event) {
+    Stage stage = (Stage) this.close.getScene().getWindow();
+    stage.close();
+  }
+
+  private void popUp(String message) {
+    Alert alert = new Alert(AlertType.INFORMATION);
+    alert.setTitle(message);
+    alert.setContentText(message);
+    alert.showAndWait();
+  }
+  ///////////////////////////////////// UTILITY /////////////////////////////////////
 
 }

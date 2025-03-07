@@ -7,3 +7,5 @@ if email and password is wrong, pop up login unsuccesful and prompt with sign up
 sign up {cm:2025-03-05}
 check existing entries when creating new account
 encrypt and decrypt name {cm:2025-03-06}
+exit button {cm:2025-03-06}
+pop up {cm:2025-03-06}
