@@ -20,6 +20,8 @@ public class SignUpController {
   @FXML
   private TextField nameField;
 
+  // sign up button clicked -> get email, password, and name -> encrypt email -> hash
+  // password -> create account
   @FXML
   private void signUp(ActionEvent event) {
     System.out.println("Signing up");

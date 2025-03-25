@@ -6,9 +6,15 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class EncryptionUtil {
 
+  // AES is a symmetric encryption algorithm
+  // in the real world, you would not hardcode the key
+  // you would store it in a secure location
+  // and use a key management system
   private static final String AES = "AES";
-  private static final String SECRET_KEY = "verysecretkeymhm";
+  private static final String SECRET_KEY = "verysecretkeymhm"; // secret key length must be 16, 24, or 32 bytes eg. 16, 24, or 32 characters
 
+// create a key with the secret key -> create a cipher with the AES algorithm -> initialize the cipher with the key and the mode -> 
+// encrypt the string -> encode the encrypted string to base64 string
   public static String encrypt(String string) {
     System.out.println("Encrypting...");
     try {
@@ -23,6 +29,8 @@ public class EncryptionUtil {
     }
   }
 
+  // create a key with the secret key -> create a cipher with the AES algorithm -> initialize the cipher with the key and the mode ->
+  // decode the string from base64 -> decrypt the string
   public static String decrypt(String string) {
     System.out.println("Decrypting...");
     try {

@@ -9,14 +9,14 @@ import java.util.function.Consumer;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class FileUtil {
-
-  private static final String DATABASE = "superSecureDb.csv";
+// Path: src/main/java/project2/project2/utils/FileUtil.java
+  private static final String DATABASE = "superSecureDb.csv"; // like the secret key, you would not hardcode this in the real world and it would not be a csv file but an SQL database
 
 public static void checkFile(
     String email,
     String password,
-    Consumer<String> onSuccess,
-    Runnable onFailure
+    Consumer<String> onSuccess, // this is where the lambda function openLogInView() is passed, a consumer is a function that takes an input and returns nothing eg, a lambda function
+    Runnable onFailure // this is where the lambda function promptSignUp() is passed, a runnable is a function that takes no input and returns nothing eg, a lambda function
   ) {
     System.out.println("Checking file...");
     try (BufferedReader reader = new BufferedReader(new FileReader(DATABASE))) {
@@ -45,6 +45,7 @@ public static void checkFile(
     }
   }
 
+  // append encrypted email, hashed password, and encrypted name to file
   public static void createAccount(String email, String password, String name) {
     System.out.println("Creating account...");
     try {
