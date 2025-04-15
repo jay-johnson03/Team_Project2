@@ -15,10 +15,10 @@ public class FileUtil {
 
   //////////////////////////////////////////////////////////////////// table paths
 
-  static final String USERS_TABLE = "database/users.csv";
-  static final String COURSES_TABLE = "database/courses.csv";
-  static final String GRADES_TABLE = "database/grades.csv";
-  static final String ASSSIGNMENTS_TABLE = "database/assignments.csv";
+  static final private String USERS_TABLE = "database/users.csv";
+  static final private String COURSES_TABLE = "database/courses.csv";
+  static final private String GRADES_TABLE = "database/grades.csv";
+  static final private String ASSSIGNMENTS_TABLE = "database/assignments.csv";
 
   //////////////////////////////////////////////////////////////////// check input credentials agaisnt database and either login, or prompt to sign up
 
