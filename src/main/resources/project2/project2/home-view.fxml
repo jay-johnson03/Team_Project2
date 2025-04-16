@@ -1,55 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.effect.*?>
-<?import javafx.geometry.*?>
-<?import java.lang.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox alignment="TOP_CENTER" prefHeight="600" prefWidth="800" spacing="15" style="-fx-background-color: #1C1C1C; -fx-padding: 20;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="your.package.HomeController">
+<VBox alignment="TOP_CENTER" prefHeight="600" prefWidth="800" spacing="15" style="-fx-background-color: #2D3139; -fx-padding: 20;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="your.package.HomeController">
    <children>
    
        <!-- Welcome Message -->
-       <Label fx:id="welcomeLabel" style="-fx-font-size: 24; -fx-text-fill: white;" text="Welcome, User" />
+       <Label fx:id="welcomeLabel" style="-fx-font-size: 24; -fx-text-fill: green; -fx-background-color: white;" text="Welcome, User" />
    
        <!-- Search Fields -->
-       <HBox spacing="10">
-      <children>
-              <TextField fx:id="crnSearchField" promptText="Search by CRN" style="-fx-background-color: #2E2E2E; -fx-text-fill: white; -fx-prompt-text-fill: #B0BEC5;" />
-              <TextField fx:id="nameSearchField" promptText="Search by Class Name" style="-fx-background-color: #2E2E2E; -fx-text-fill: white; -fx-prompt-text-fill: #B0BEC5;" />
-              <Button fx:id="searchButton" onAction="#handleSearch" style="-fx-background-color: #FFC107; -fx-text-fill: #1C1C1C;" text="Search" />
-      </children>
-       </HBox>
-   
-       <!-- Search Results Table -->
-       <Label style="-fx-text-fill: white; -fx-font-size: 18;" text="Available Classes" />
-       <TableView fx:id="searchResultsTable" prefHeight="200">
-           <columns>
-               <TableColumn fx:id="crnColumn" prefWidth="100" text="CRN" />
-               <TableColumn fx:id="courseNameColumn" prefWidth="250" text="Course Name" />
-               <TableColumn fx:id="actionColumn" prefWidth="100" text="Add" />
-           </columns>
-       </TableView>
-      <HBox alignment="TOP_CENTER">
+       <HBox minHeight="-Infinity" prefHeight="422.0" prefWidth="760.0" spacing="100.0">
          <children>
-            <Region prefHeight="31.0" prefWidth="299.0" />
-         
-                   <!-- Enrolled Classes Table -->
-             <Label alignment="CENTER" prefHeight="27.0" prefWidth="166.0" style="-fx-text-fill: white; -fx-font-size: 18;" text="Your Current Classes" />
-            <Region prefHeight="31.0" prefWidth="129.0" HBox.hgrow="ALWAYS" />
-            <Button alignment="CENTER_RIGHT" mnemonicParsing="false" prefHeight="31.0" prefWidth="156.0" style="-fx-background-color: FFC107; -fx-text-fill: #1C1C1C;" text="View Classes/Grades" textAlignment="CENTER">
-               <opaqueInsets>
+            <TableView fx:id="yourCourses" prefHeight="414.0" prefWidth="337.0">
+              <columns>
+                <TableColumn prefWidth="116.00003051757812" text="Course Name" />
+                <TableColumn prefWidth="99.99996948242188" text="Course ID" />
+                  <TableColumn minWidth="0.79998779296875" prefWidth="116.800048828125" text="Professor" />
+              </columns>
+               <HBox.margin>
                   <Insets />
-               </opaqueInsets>
-            </Button>
+               </HBox.margin>
+            </TableView>
+            <TableView fx:id="availableCourses" prefHeight="422.0" prefWidth="345.0">
+              <columns>
+                <TableColumn prefWidth="75.0" text="Course" />
+                <TableColumn prefWidth="75.0" text="Course ID" />
+                  <TableColumn prefWidth="75.0" text="Professor" />
+              </columns>
+            </TableView>
+         </children>
+       </HBox>
+      <HBox prefHeight="47.0" prefWidth="760.0">
+         <children>
+            <Button fx:id="btnAddClass" mnemonicParsing="false" text="Add Class" />
          </children>
       </HBox>
-       <TableView fx:id="enrolledClassesTable" prefHeight="200">
-           <columns>
-               <TableColumn fx:id="enrolledNameColumn" prefWidth="250" text="Class Name" />
-               <TableColumn fx:id="dropColumn" prefWidth="100" text="Drop" />
-           </columns>
-       </TableView>
    </children>
 </VBox>

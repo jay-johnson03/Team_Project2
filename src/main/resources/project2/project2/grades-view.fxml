@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox alignment="TOP_CENTER" prefHeight="600" prefWidth="800" spacing="20" style="-fx-background-color: #1C1C1C; -fx-padding: 20;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="your.package.GradesController">
+<VBox alignment="TOP_CENTER" prefHeight="600" prefWidth="800" spacing="20" style="-fx-background-color: #1C1C1C; -fx-padding: 20;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="your.package.grade">
    <children>
    
        <!-- Header -->
@@ -15,12 +18,11 @@
        <VBox fx:id="studentSection" spacing="10">
       <children>
               <Label style="-fx-text-fill: white; -fx-font-size: 18;" text="Your Enrolled Classes" />
-              <TableView fx:id="gradesTable" prefHeight="300" style="-fx-background-color: #2E2E2E;">
+              <TableView fx:id="gradesTable" editable="true" prefHeight="300" style="-fx-background-color: #2E2E2E;">
                   <columns>
                       <TableColumn fx:id="courseNameColumn" prefWidth="200" text="Course Name" />
                       <TableColumn fx:id="professorNameColumn" prefWidth="200" text="Professor" />
                       <TableColumn fx:id="gradeColumn" prefWidth="100" text="Grade" />
-                      <TableColumn fx:id="dropColumn" prefWidth="100" text="Drop" />
                   </columns>
               </TableView>
       </children>
@@ -46,6 +48,7 @@
        <!-- Back Button -->
        <HBox alignment="CENTER_RIGHT" prefWidth="800">
       <children>
+            <Button mnemonicParsing="false" text="Update Class" />
               <Button fx:id="backButton" onAction="#handleBackToHome" style="-fx-background-color: #607D8B; -fx-text-fill: white; -fx-font-weight: bold;" text="Back to Home" />
       </children>
        </HBox>
