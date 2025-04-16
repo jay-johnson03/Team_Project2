@@ -39,6 +39,7 @@
       <HBox prefHeight="47.0" prefWidth="760.0">
          <children>
             <Button fx:id="btnAddClass" mnemonicParsing="false" text="Add Class" />
+            <Button fx:id="btnDropCourse" mnemonicParsing="false" text="Drop Class" />
          </children>
       </HBox>
    </children>

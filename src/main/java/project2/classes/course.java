@@ -2,22 +2,22 @@ package project2.classes;
 
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.collections.ObservableList;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.util.Callback;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class course {
 
     private int id;
     private String name;
     private String professorId;
-    private user selectedUser;
 
+    // allllll the fxml variables for the course management system
     @FXML
-    private TableView<course> courseTableView;
+    private TableView<course> yourCoursesView;
     @FXML
     private TableColumn<course, Integer> courseIdColumn;
     @FXML
@@ -27,52 +27,62 @@ public class course {
     @FXML
     private Button btnAddClass;
     @FXML
+    private Button btnDropClass;
+    @FXML
+    private TableView<course> availableCoursesView; // Available courses table view
+    @FXML 
+    private TableColumn<course, Integer> availableCourseIdColumn; // Column for course ID
+    @FXML
+    private TableColumn<course, String> availableCourseNameColumn; // Column for course name
+    @FXML
+    private TableColumn<course, String> availableCourseProfessorIdColumn; // Column for professor ID
+    @FXML
     private TableColumn<course, Void> actionColumn; // Column for the button
     
 
-    public void initialize() {
-        // Initialize the course table view and columns here
+    private ObservableList<course> availableCourses = FXCollections.observableArrayList();
+    private ObservableList<course> yourCourses = FXCollections.observableArrayList();
 
+    public void initialize() {
+        // Initialize the avaible courses table view
+
+        availableCourseIdColumn.setCellValueFactory(new PropertyValueFactory<>("course id"));
+        availableCourseNameColumn.setCellValueFactory(new PropertyValueFactory<>("course name"));
+        availableCourseProfessorIdColumn.setCellValueFactory(new PropertyValueFactory<>("course professor id"));
+        availableCoursesView.setEditable(true);
+
+        // Initialize the your courses table view
         courseIdColumn.setCellValueFactory(new PropertyValueFactory<>("course id"));
         courseNameColumn.setCellValueFactory(new PropertyValueFactory<>("course name"));
         courseProfessorIdColumn.setCellValueFactory(new PropertyValueFactory<>("course professor id"));
+        yourCoursesView.setEditable(true);
 
-        courseTableView.setEditable(true);
 
-    addButtonToTable();
+        // random sample data to test the table view
+        availableCourses.addAll(null, 
+            new course(101, "CS101", "Prof. Smith"),
+            new course(202, "CS102", "Prof. Johnson"),
+            new course(303, "CS103", "Prof. Brown"));
+
+        btnAddClass.setOnAction(event -> addSelectedCourses());
+
         }
 
-        private void addButtonToTable() {
-            Callback<TableColumn<course, Void>, TableCell<course, Void>> cellFactory = new Callback<>() {
-                @Override
-                public TableCell<course, Void> call(final TableColumn<course, Void> param) {
-                    return new TableCell<>() {
-                        private final Button btn = new Button("Action");
-    
-                        {
-                            btn.setOnAction(event -> {
-                                course selectedCourse = getTableView().getItems().get(getIndex());
-                                System.out.println("Button clicked for course: " + selectedCourse.getName());
-                                // Add your button action logic here
-                            });
-                        }
-    
-                        @Override
-                        protected void updateItem(Void item, boolean empty) {
-                            super.updateItem(item, empty);
-                            if (empty) {
-                                setGraphic(null);
-                        } else {
-                            setGraphic(btn);
-                        }
-                    }
-                };
-            }
-        };
-
-        actionColumn.setCellFactory(cellFactory);
+    private void addSelectedCourses() {
+        // Get the course you selected from the available courses table view
+        course selectedCourse = availableCoursesView.getSelectionModel().getSelectedItem();
+        if (selectedCourse != null && !yourCourses.contains(selectedCourse)) {
+            // Add the selected course to your courses list
+            yourCourses.add(selectedCourse);
+            // Remove the selected course from the available courses list
+            availableCourses.remove(selectedCourse);
+        } else {
+            System.out.println("Course already added or not selected.");
+        }
     }
 
+
+                   
     public course(int id, String name, String professorId) {
         this.id = id;
         this.name = name;
