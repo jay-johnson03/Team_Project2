@@ -14,6 +14,7 @@ public class course {
     private String name;
     private String professorId;
 
+    /*
     // allllll the fxml variables for the course management system
     @FXML
     private TableView<course> yourCoursesView;
@@ -78,8 +79,7 @@ public class course {
             System.out.println("Course already added or not selected.");
         }
     }
-
-
+    */
                    
     public course(int id, String name, String professorId) {
         this.id = id;
