@@ -7,7 +7,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 public class course {
 
@@ -38,14 +37,13 @@ public class course {
     private TableColumn<course, String> availableCourseProfessorIdColumn; // Column for professor ID
     @FXML
     private TableColumn<course, Void> actionColumn; // Column for the button
-    
 
     private ObservableList<course> availableCourses = FXCollections.observableArrayList();
     private ObservableList<course> yourCourses = FXCollections.observableArrayList();
 
     public void initialize() {
-        // Initialize the avaible courses table view
 
+        // Initialize the avaible courses table view
         availableCourseIdColumn.setCellValueFactory(new PropertyValueFactory<>("course id"));
         availableCourseNameColumn.setCellValueFactory(new PropertyValueFactory<>("course name"));
         availableCourseProfessorIdColumn.setCellValueFactory(new PropertyValueFactory<>("course professor id"));
@@ -58,15 +56,15 @@ public class course {
         yourCoursesView.setEditable(true);
 
 
-        // random sample data to test the table view
+        // random sample data to test the table view 
         availableCourses.addAll(null, 
             new course(101, "CS101", "Prof. Smith"),
             new course(202, "CS102", "Prof. Johnson"),
             new course(303, "CS103", "Prof. Brown"));
-
+        
+        // this will move the class over to the your courses table view
         btnAddClass.setOnAction(event -> addSelectedCourses());
-
-        }
+    }
 
     private void addSelectedCourses() {
         // Get the course you selected from the available courses table view
