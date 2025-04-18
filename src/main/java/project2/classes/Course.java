@@ -1,11 +1,11 @@
 package project2.classes;
 
-public class course {
+public class Course {
     private int id;
     private String name;
     private String professorId;
 
-    public course(int id, String name, String professorId) {
+    public Course(int id, String name, String professorId) {
         this.id = id;
         this.name = name;
         this.professorId = professorId;

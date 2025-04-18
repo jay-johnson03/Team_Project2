@@ -8,13 +8,13 @@
 
 <?import javafx.scene.control.Button?>
 <VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="project2.project2.controllers.SignUpController">
+      fx:controller="project2.project2.controllers.loginController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
     <Button text="Close" fx:id="close" onAction="#close"/>
     <TextField fx:id="emailField" promptText="Enter your email"/>
     <PasswordField fx:id="passwordField" promptText="Enter your password"/>
-    <TextField fx:id="nameField" promptText="Enter your name"/>
-    <Button text="Sign Up" onAction="#signUp"/>
+    <Button text="Sign In" onAction="#signIn"/>
+    <Button text="Sign Up" onAction="#promptSignUp"/>
 </VBox>

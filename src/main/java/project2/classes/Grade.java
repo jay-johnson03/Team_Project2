@@ -1,13 +1,13 @@
 package project2.classes;
 
-public class grade {
+public class Grade {
     private int id;
     private int userId;
     private int courseId;
     private int assignmentId;
     private Double grade; 
 
-    public grade(int id, int userId, int courseId, int assignmentId, Double grade) {
+    public Grade(int id, int userId, int courseId, int assignmentId, Double grade) {
         this.id = id;
         this.userId = userId;
         this.courseId = courseId;

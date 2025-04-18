@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import org.mindrot.jbcrypt.BCrypt;
 
+import project2.classes.User;
+
 public class FileUtil {
 
   //////////////////////////////////////////////////////////////////// table paths
@@ -18,14 +20,14 @@ public class FileUtil {
   static final private String USERS_TABLE = "database/users.csv";
   static final private String COURSES_TABLE = "database/courses.csv";
   static final private String GRADES_TABLE = "database/grades.csv";
-  static final private String ASSSIGNMENTS_TABLE = "database/assignments.csv";
+  static final private String ASSIGNMENTS_TABLE = "database/assignments.csv";
 
-  //////////////////////////////////////////////////////////////////// check input credentials agaisnt database and either login, or prompt to sign up
+  //////////////////////////////////////////////////////////////////// check input credentials against database and either login, or prompt to sign up
 
   public static void logInCheck(
     String email,
     String password,
-    Consumer<String> onSuccess,
+    Consumer<User> onSuccess,
     Runnable onFailure
   ) {
     System.out.println("Checking file...");
@@ -37,11 +39,22 @@ public class FileUtil {
     }
 
     String[] userData = results.get(0); // Get the first matching row (should only be one but select returns a list)
-    boolean passwordMatch = BCrypt.checkpw(password, userData[3]); // Check hashed password
+    System.out.println("Hashed from db: '" + userData[3] +"'");
+    System.out.println("Password from input: '" + password + "'");
+
+    boolean passwordMatch = BCrypt.checkpw(password, userData[3].trim()); // Check hashed password
+
+    System.out.println("Password match: " + passwordMatch);
 
     if (passwordMatch) {
       System.out.println("Account found");
-      onSuccess.accept(userData[1]); // Pass the user's name to onSuccess
+      User user = new User(
+        Integer.parseInt(userData[0]),
+        userData[1],
+        userData[2],
+        Boolean.parseBoolean(userData[4])
+      );
+      onSuccess.accept(user); // Pass the user's name to onSuccess
     } else {
       System.out.println("Incorrect password");
       onFailure.run(); // password does not match -> prompt to sign up
@@ -50,7 +63,7 @@ public class FileUtil {
 
   //////////////////////////////////////////////////////////////////// check if file exists, if not create it
 
-  public static void initilizeTables() {
+  public static void initializeTables() {
     try {
       Files.createDirectories(Paths.get("database"));
     } catch (IOException e) {
@@ -86,7 +99,7 @@ public class FileUtil {
     }
 
     try {
-      FileWriter writer = new FileWriter(ASSSIGNMENTS_TABLE);
+      FileWriter writer = new FileWriter(ASSIGNMENTS_TABLE);
       writer.write("Assignment_Id, Assignment_Name\n");
       writer.close();
     } catch (IOException e) {
@@ -107,13 +120,12 @@ public class FileUtil {
       System.out.println("File exists");
     } else {
       System.out.println("File does not exist");
-      initilizeTables();
+      initializeTables();
     }
 
     // check if email already exists and also get next id
     // if it does, return
     // if it doesn't, create account
-    int id = 0;
     try (
       BufferedReader reader = new BufferedReader(new FileReader(USERS_TABLE))
     ) {
@@ -130,7 +142,7 @@ public class FileUtil {
       e.printStackTrace();
     }
 
-    String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+    String hashedPassword = HashingUtil.hashPassword(password); 
 
     insert(
       new String[] { name, email, hashedPassword, String.valueOf(isProfessor) },
@@ -162,6 +174,7 @@ public class FileUtil {
 
       // add id to data
       String[] datawithId = new String[data.length + 1];
+      datawithId[0] = String.valueOf(id);
 
       for (int i = 1; i < datawithId.length; i++) {
         datawithId[i] = data[i - 1];

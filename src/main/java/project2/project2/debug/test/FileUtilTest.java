@@ -26,7 +26,7 @@ public class FileUtilTest {
 
     @BeforeEach
     public void setUp() {
-            FileUtil.initilizeTables();
+            FileUtil.initializeTables();
             System.out.println("\nDatabase initialized.");
         }
 

@@ -4,15 +4,19 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import project2.classes.User;
 
-public class LogInController {
+public class homeController {
 
   @FXML
   private Label nameLabel;
 
-  public void setName(String name) {
-    System.out.println("Setting name label");
-    this.nameLabel.setText(name);
+  private User user;
+
+  public void setUser(User user) {
+    this.user = user;
+
+    nameLabel.setText("Welcome, " + user.getName() + "!");
   }
 
   @FXML
@@ -20,7 +24,7 @@ public class LogInController {
     // close the window, makes sure to close the window that the button is in by
     // getting the source of the event and getting the scene and window from that
     Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene()
-      .getWindow();
+        .getWindow();
     stage.close();
   }
 }

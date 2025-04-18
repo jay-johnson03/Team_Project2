@@ -8,6 +8,6 @@ public class resetDatabase {
 
   // self-explanatory
   public static void main(String[] args) {
-    FileUtil.initilizeTables();
+    FileUtil.initializeTables();
   }
 }
