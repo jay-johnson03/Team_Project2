@@ -14,14 +14,14 @@ public class FileUtilTest {
     public static void main(String[] args) throws IOException {
         FileUtilTest test = new FileUtilTest();
         test.setUp();
-        test.testInitializeTables();
-        test.testCreateAccount();
-        test.testCreateAccountDuplicateEmail();
-        test.testLogInCheckSuccess();
-        test.testLogInCheckFailureWrongPassword();
-        test.testLogInCheckFailureNoAccount();
+        // test.testInitializeTables();
+        // test.testCreateAccount();
+        // test.testCreateAccountDuplicateEmail();
+        // test.testLogInCheckSuccess();
+        // test.testLogInCheckFailureWrongPassword();
+        // test.testLogInCheckFailureNoAccount();
         test.testInsertAndSelect();
-        test.testDelete();
+        // test.testDelete();
     }
 
     @BeforeEach
@@ -102,6 +102,7 @@ public class FileUtilTest {
             FileUtil.insert(new String[]{"Test Course", "Professor A"}, "database/courses.csv");
 
             List<String[]> courses = FileUtil.select(1, "Test Course", "database/courses.csv");
+            System.out.println("Courses found: " + courses.get(0)[0]);
             assertEquals(1, courses.size());
             assertEquals("Test Course", courses.get(0)[1]);
 

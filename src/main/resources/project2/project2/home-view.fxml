@@ -2,19 +2,35 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.PasswordField?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="project2.project2.controllers.homeController">
+<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml/1"
+    xmlns="http://javafx.com/javafx/24" fx:controller="project2.project2.controllers.homeController">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <Label text="Hello,"/>
-    <Label fx:id="nameLabel" text=" "/>
-    <Button text="Close" fx:id="close" onAction="#close"/>
+    <children>
+        <Label text="Courses" fx:id="coursesLabel" />
+        <TableView fx:id="coursesTable">
+            <columns>
+                <TableColumn text="Course Id" fx:id="courseIdColumn" prefWidth="150.0" />
+                <TableColumn text="Course Name" fx:id="courseNameColumn" prefWidth="150.0" />
+                <TableColumn text="Professor Name" fx:id="professorNameColumn" prefWidth="150.0" />
+            </columns>
+        </TableView>
+        <Label text="Grades" fx:id="gradesLabel" />
+        <TableView fx:id="gradesTable">
+            <columns>
+                <TableColumn text="Course Id" fx:id="gradesCourseIdColumn" prefWidth="150.0" />
+                <TableColumn text="Course Name" fx:id="gradesCourseNameColumn" prefWidth="150.0" />
+                <TableColumn text="Assignment Name" fx:id="assignmentNameColumn" prefWidth="150.0" />
+                <TableColumn text="Grade" fx:id="gradeColumn" prefWidth="150.0" />
+            </columns>
+        </TableView>
+    </children>
+
 
 </VBox>

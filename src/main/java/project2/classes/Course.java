@@ -3,9 +3,9 @@ package project2.classes;
 public class Course {
     private int id;
     private String name;
-    private String professorId;
+    private int professorId;
 
-    public Course(int id, String name, String professorId) {
+    public Course(int id, String name, int professorId) {
         this.id = id;
         this.name = name;
         this.professorId = professorId;
@@ -16,7 +16,7 @@ public class Course {
     public String getName() {
         return name;
     }
-    public String getProfessorId() {
+    public int getProfessorId() {
         return professorId;
     }
 }

@@ -39,8 +39,6 @@ public class FileUtil {
     }
 
     String[] userData = results.get(0); // Get the first matching row (should only be one but select returns a list)
-    System.out.println("Hashed from db: '" + userData[3] +"'");
-    System.out.println("Password from input: '" + password + "'");
 
     boolean passwordMatch = BCrypt.checkpw(password, userData[3].trim()); // Check hashed password
 
@@ -48,6 +46,7 @@ public class FileUtil {
 
     if (passwordMatch) {
       System.out.println("Account found");
+      System.out.println("Logging in as " + userData[1]);
       User user = new User(
         Integer.parseInt(userData[0]),
         userData[1],
