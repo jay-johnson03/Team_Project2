@@ -1,16 +1,28 @@
 package project2.classes;
 
+import java.util.List;
+
+import project2.project2.utils.FileUtil;
+
 public class User {
     private int id;
     private String name;
     private String email;
     private Boolean isProfessor;
+    private List<String[]> courses; // List of courses the user is enrolled in or teaches
+    // private List<String[]> grades; // List of grades the user has received
 
     public User(int id, String name, String email, Boolean isProfessor) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.isProfessor = isProfessor;
+
+        if (isProfessor) {
+            fetchCourses(2); // Fetch courses taught by the professor
+            } else {
+            fetchCourses(1); // Fetch courses enrolled in by the student
+        }
     }
 
     public int getId() {
@@ -28,6 +40,16 @@ public class User {
     public Boolean getIsProfessor() {
         return isProfessor;
     }
+
+    public void fetchCourses(int col) {
+        this.courses = FileUtil.select(col, String.valueOf(this.id), FileUtil.COURSES_TABLE);
+        
+    }
+
+    // public void fetchGrades(int col) {
+    //     this.grades = FileUtil.select(col, String.valueOf(this.id), FileUtil.GRADES_TABLE);
+        
+    // }
 
 }
 /*
