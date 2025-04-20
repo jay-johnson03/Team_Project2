@@ -10,17 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import org.mindrot.jbcrypt.BCrypt;
-
 import project2.classes.User;
 
 public class FileUtil {
 
   //////////////////////////////////////////////////////////////////// table paths
 
-  static final private String USERS_TABLE = "database/users.csv";
-  static final private String COURSES_TABLE = "database/courses.csv";
-  static final private String GRADES_TABLE = "database/grades.csv";
-  static final private String ASSIGNMENTS_TABLE = "database/assignments.csv";
+  public static final String USERS_TABLE = "database/users.csv";
+  public static final String COURSES_TABLE = "database/courses.csv";
+  public static final String GRADES_TABLE = "database/grades.csv";
+  public static final String ASSIGNMENTS_TABLE = "database/assignments.csv";
 
   //////////////////////////////////////////////////////////////////// check input credentials against database and either login, or prompt to sign up
 
@@ -39,7 +38,7 @@ public class FileUtil {
     }
 
     String[] userData = results.get(0); // Get the first matching row (should only be one but select returns a list)
-    System.out.println("Hashed from db: '" + userData[3] +"'");
+    System.out.println("Hashed from db: '" + userData[3] + "'");
     System.out.println("Password from input: '" + password + "'");
 
     boolean passwordMatch = BCrypt.checkpw(password, userData[3].trim()); // Check hashed password
@@ -142,7 +141,7 @@ public class FileUtil {
       e.printStackTrace();
     }
 
-    String hashedPassword = HashingUtil.hashPassword(password); 
+    String hashedPassword = HashingUtil.hashPassword(password);
 
     insert(
       new String[] { name, email, hashedPassword, String.valueOf(isProfessor) },
@@ -225,12 +224,15 @@ public class FileUtil {
     List<String[]> results = new ArrayList<>();
     try (BufferedReader reader = new BufferedReader(new FileReader(table))) {
       String line;
-      reader.readLine(); // skip header
       while ((line = reader.readLine()) != null) {
+        System.out.println("Line: " + line);
         String[] data = line.split(",");
-        if (data[col].equals(input)) {
+        // System.out.println("id: " + data[0]);
+        // System.out.println("col: " + data[col]);
+        System.out.println("Comparing: '" + data[col].trim() + "'' with '" + input.trim() + "'");
+        if (data[col].trim().equals(input.trim())) {
+          System.out.println("Found match: " + line);
           results.add(data);
-          return results;
         }
       }
     } catch (Exception e) {
