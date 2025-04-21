@@ -39,7 +39,7 @@
         <Label text="Assignments" fx:id="gradesLabel" />
         <TableView fx:id="gradesTable">
             <columns>
-                <TableColumn text="Course Id" fx:id="gradesCourseIdColumn" prefWidth="150.0" />
+                <TableColumn text="Grade Id" fx:id="gradesCourseIdColumn" prefWidth="150.0" />
                 <TableColumn text="Course Id" fx:id="gradesCourseNameColumn" prefWidth="150.0" />
                 <TableColumn text="Assignment Name" fx:id="assignmentNameColumn" prefWidth="150.0" />
                 <TableColumn text="Grade" fx:id="gradeColumn" prefWidth="150.0" />

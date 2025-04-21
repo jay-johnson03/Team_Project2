@@ -24,9 +24,6 @@ import project2.project2.utils.FileUtil;
 public class homeController {
 
   @FXML
-  private Label nameLabel;
-
-  @FXML
   private Label coursesLabel;
 
   @FXML
@@ -69,13 +66,17 @@ public class homeController {
   private Button saveGradeButton;
 
   @FXML
-  private TextField assignmentNameField; // Field for entering assignment name
+  private TextField assignmentNameField;
 
   @FXML
-  private Button addGradeButton; // Button for adding a grade
+  private TextField courseIdField;
+
+  @FXML
+  private Button addGradeButton;
 
   private User user;
 
+  // ObservableList to store and display enrolled courses/grades
   private ObservableList<Course> coursesList =
     FXCollections.observableArrayList();
 
@@ -85,14 +86,17 @@ public class homeController {
   private Course selectedCourse;
   private Grade selectedGrade;
 
+  // sets logged in user and begins initialization
   public void setUser(User user) {
     this.user = user;
     initializeCoursesTable();
   }
 
+  // initializes the courses table with user data
   public void initializeCoursesTable() {
     welcomeLabel.setText("Welcome, " + user.getName() + " #" + user.getId());
 
+    // set columns
     courseIdColumn.setCellValueFactory(
       new PropertyValueFactory<Course, String>("id")
     );
@@ -103,6 +107,7 @@ public class homeController {
       new PropertyValueFactory<Course, String>("professorId")
     );
 
+    // add load data in classes
     for (String[] course : user.getCourses()) {
       coursesList.add(
         new Course(
@@ -112,9 +117,10 @@ public class homeController {
         )
       );
     }
-
+    // load classes into table
     coursesTable.setItems(coursesList);
 
+    //
     TableView.TableViewSelectionModel<Course> selectionModel =
       coursesTable.getSelectionModel();
     ObservableList<Course> selectedItems = selectionModel.getSelectedItems();
@@ -133,6 +139,7 @@ public class homeController {
     );
   }
 
+  // initializes the grades table for a selected course
   public void initializeGradesTable(int courseId) {
     gradesList.clear();
 
@@ -191,6 +198,7 @@ public class homeController {
       });
   }
 
+  // saves changes made to a selected grade
   @FXML
   void saveGradeChanges(ActionEvent event) {
     if (selectedGrade == null) {
@@ -205,19 +213,16 @@ public class homeController {
     }
 
     try {
-      // Update the grade in the assignments table
       FileUtil.update(
-        String.valueOf(selectedGrade.getId()), // ID of the grade
-        4, // Column index for the grade
-        newGradeValue, // New grade value
-        FileUtil.ASSIGNMENTS_TABLE // Table to update
+        String.valueOf(selectedGrade.getId()),
+        4,
+        newGradeValue,
+        FileUtil.ASSIGNMENTS_TABLE
       );
 
-      // Update the grade in the observable list and refresh the table
       selectedGrade.setGrade(Double.parseDouble(newGradeValue));
       gradesTable.refresh();
 
-      // Clear the input field
       editGradeField.clear();
     } catch (IOException e) {
       System.out.println("Error updating grade.");
@@ -225,28 +230,74 @@ public class homeController {
     }
   }
 
+  // adds a new course to the user's enrolled courses
   @FXML
-  void addCourse(ActionEvent event) {}
+  void addCourse(ActionEvent event) {
+    String courseId = courseIdField.getText();
+    if (courseId.isEmpty()) {
+      System.out.println("Course ID cannot be empty.");
+      return;
+    }
 
+    for (Course course : coursesList) {
+      if (course.getId() == Integer.parseInt(courseId)) {
+        System.out.println("You are already enrolled in this course.");
+        return;
+      }
+    }
+
+    String[][] courseEntry = FileUtil.select(
+      0,
+      courseId,
+      FileUtil.COURSES_TABLE
+    );
+    if (courseEntry.length == 0) {
+      System.out.println("Course not found.");
+      return;
+    }
+
+    try {
+      String[] data = { courseId, String.valueOf(user.getId()) };
+      FileUtil.insert(data, FileUtil.ENROLLMENTS_TABLE);
+
+      coursesList.clear();
+      initializeCoursesTable();
+
+      System.out.println("Course added successfully.");
+    } catch (Exception e) {
+      System.out.println("Error adding course.");
+      e.printStackTrace();
+    }
+  }
+
+  // drops a selected course from the user's enrolled courses
   @FXML
   void drop(ActionEvent event) {
+    if (selectedCourse == null) {
+      System.out.println("No course selected.");
+      return;
+    }
+
     try {
       FileUtil.delete(
         String.valueOf(selectedCourse.getId()),
         FileUtil.ENROLLMENTS_TABLE
       );
+
+      coursesList.remove(selectedCourse);
+      coursesTable.refresh();
+
+      gradesList.clear();
+      gradesTable.refresh();
+
+      System.out.println("Course dropped successfully.");
     } catch (IOException e) {
+      System.out.println("Error dropping course.");
       e.printStackTrace();
     }
-
-    coursesList.remove(selectedCourse);
-    coursesTable.refresh();
-
-    gradesList.clear();
-    gradesTable.refresh();
-    selectedCourse = null;
   }
 
+  // adds a new grade for the selected course
   @FXML
   void addGrade(ActionEvent event) {
     if (selectedCourse == null) {
@@ -260,23 +311,21 @@ public class homeController {
       return;
     }
 
-    // Create a new grade entry
     String[] newGrade = {
-      String.valueOf(selectedCourse.getId()), // Course ID
-      String.valueOf(user.getId()), // User ID
-      assignmentName, // Assignment Name
-      "0", // Default grade
+      String.valueOf(selectedCourse.getId()),
+      String.valueOf(user.getId()),
+      assignmentName,
+      "0",
     };
 
-    // Insert the new grade into the assignments table
     FileUtil.insert(newGrade, FileUtil.ASSIGNMENTS_TABLE);
 
     initializeGradesTable(selectedCourse.getId());
 
-    // Clear the input field
     assignmentNameField.clear();
   }
 
+  // deletes a selected grade from the grades table
   @FXML
   void deleteGrade(ActionEvent event) {
     try {
@@ -292,27 +341,26 @@ public class homeController {
     editGradeField.clear();
   }
 
+  // closes the application window
   @FXML
   private void close(ActionEvent event) {
-    // close the window, makes sure to close the window that the button is in by
-    // getting the source of the event and getting the scene and window from that
     Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene()
       .getWindow();
     stage.close();
   }
+  /*
+   * Example usage of FileUtil for fetching grades:
+   * List<String[]> grades = FileUtil.select(
+   *   1,
+   *   String.valueOf(user.getId()),
+   *   FileUtil.GRADES_TABLE
+   * );
+   *
+   * for (String[] grade : grades) { // this is how to access multiple results
+   *   System.out.println("Course: " + grade[0]);
+   * }
+   *
+   * String firstGrade = grades.get(0)[0];
+   * System.out.println("First grade: " + firstGrade); // this is how to access a single result
+   */
 }
-/*
- * List<String[]> grades = FileUtil.select(
- * 1,
- * String.valueOf(user.getId()),
- * FileUtil.GRADES_TABLE
- * );
- *
- * for (String[] grade : grades) { // this is how to access multiple results
- * System.out.println("Course: " + grade[0]);
- * }
- *
- * String firstGrade = grades.get(0)[0];
- * System.out.println("First grade: " + firstGrade); // this is how to access a
- * single result
- */
