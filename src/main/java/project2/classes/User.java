@@ -17,8 +17,6 @@ public class User {
   private static String[][] courses;
   private String[][] grades;
 
-  // private List<String[]> grades; // List of grades the user has received
-
   public User(int id) {
     String[][] userData = FileUtil.select(0, String.valueOf(id), FileUtil.USERS_TABLE);
     this.id = Integer.parseInt(userData[0][0]);
@@ -29,11 +27,11 @@ public class User {
     if (isProfessor) {
       this.courses = FileUtil.select(2, String.valueOf(id), FileUtil.COURSES_TABLE);
     } else {
-      this.grades = FileUtil.select(2, String.valueOf(id), FileUtil.ASSIGNMENTS_TABLE);
+      String[][] enrollments = FileUtil.select(2, String.valueOf(id), FileUtil.ENROLLMENTS_TABLE);
 
       Set<String> courseIdSet = new HashSet<>();
-      for (String[] grade : grades) {
-        courseIdSet.add(grade[0]);
+      for (String[] enrollment : enrollments) {
+        courseIdSet.add(enrollment[1]); // courseId is at index 1 in enrollments.csv
       }
 
       List<String[]> courseList = new java.util.ArrayList<>();
@@ -69,6 +67,7 @@ public class User {
   }
 
   public String[][] getGrades() {
+    grades = FileUtil.select(2, String.valueOf(id), FileUtil.ASSIGNMENTS_TABLE);
     return grades;
   }
 

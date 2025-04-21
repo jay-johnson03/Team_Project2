@@ -20,6 +20,7 @@ public class FileUtil {
   public static final String COURSES_TABLE = "database/courses.csv";
   public static final String GRADES_TABLE = "database/grades.csv";
   public static final String ASSIGNMENTS_TABLE = "database/assignments.csv";
+  public static final String ENROLLMENTS_TABLE = "database/enrollments.csv";
 
   //////////////////////////////////////////////////////////////////// check input
   //////////////////////////////////////////////////////////////////// credentials

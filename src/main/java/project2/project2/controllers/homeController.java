@@ -1,5 +1,6 @@
 package project2.project2.controllers;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Observable;
 
@@ -8,9 +9,11 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -47,12 +50,19 @@ public class homeController {
   private TableColumn<Grade, String> gradeColumn;
   @FXML
   private Label welcomeLabel;
+  @FXML
+  private TextField editGradeField;
+  @FXML
+  private Button saveGradeButton;
 
   private User user;
 
   private ObservableList<Course> coursesList = FXCollections.observableArrayList();
 
   private ObservableList<Grade> gradesList = FXCollections.observableArrayList();
+
+  private Course selectedCourse;
+  private Grade selectedGrade;
 
   public void setUser(User user) {
     this.user = user;
@@ -69,32 +79,25 @@ public class homeController {
     professorNameColumn.setCellValueFactory(
         new PropertyValueFactory<Course, String>("professorId"));
 
-    for (String[] course : User.getCourses()) {
-      // System.out.println("Course: " + course[0] + " " + course[1] + " "
-      // + course[2]);
+    for (String[] course : user.getCourses()) {
       coursesList.add(new Course(Integer.parseInt(course[0]), course[1], Integer.parseInt(course[2])));
     }
 
     coursesTable.setItems(coursesList);
 
-    TableView.TableViewSelectionModel<Course> selectionModel = coursesTable
-        .getSelectionModel();
-    ObservableList<Course> selectedItems = selectionModel
-        .getSelectedItems();
+    TableView.TableViewSelectionModel<Course> selectionModel = coursesTable.getSelectionModel();
+    ObservableList<Course> selectedItems = selectionModel.getSelectedItems();
 
     selectedItems.addListener(new ListChangeListener<Course>() {
-
       @Override
       public void onChanged(Change<? extends Course> course) {
         if (course.next()) {
-          Course selectedCourse = course.getList().get(0);
+          selectedCourse = course.getList().get(0);
           int selectedCourseId = selectedCourse.getId();
           initializeGradesTable(selectedCourseId);
         }
       }
-
     });
-
   }
 
   public void initializeGradesTable(int courseId) {
@@ -106,7 +109,7 @@ public class homeController {
     gradesCourseNameColumn.setCellValueFactory(
         new PropertyValueFactory<Grade, String>("userId"));
     assignmentNameColumn.setCellValueFactory(
-        new PropertyValueFactory<Grade, String>("assignmentId"));
+        new PropertyValueFactory<Grade, String>("name"));
     gradeColumn.setCellValueFactory(
         new PropertyValueFactory<Grade, String>("grade"));
 
@@ -136,6 +139,18 @@ public class homeController {
         }
       });
     }
+
+    gradesTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+      if (newSelection != null) {
+        selectedGrade = newSelection;
+        editGradeField.setText(String.valueOf(selectedGrade.getGrade()));
+      }
+    });
+  }
+
+  @FXML
+  void saveGradeChanges(ActionEvent event) {
+    //
   }
 
   @FXML
@@ -144,8 +159,38 @@ public class homeController {
   }
 
   @FXML
+  void drop(ActionEvent event) {
+
+    try {
+      FileUtil.delete(String.valueOf(selectedCourse.getId()), FileUtil.ENROLLMENTS_TABLE);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    coursesList.remove(selectedCourse);
+    coursesTable.refresh();
+
+    gradesList.clear();
+    gradesTable.refresh();
+    selectedCourse = null;
+
+  }
+
+  @FXML
   void addGrade(ActionEvent event) {
 
+  }
+
+  @FXML
+  void deleteGrade(ActionEvent event) {
+    try {
+      FileUtil.delete(String.valueOf(selectedGrade.getId()), FileUtil.ASSIGNMENTS_TABLE);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    gradesList.remove(selectedGrade);
+    gradesTable.refresh();
+    editGradeField.clear();
   }
 
   @FXML
