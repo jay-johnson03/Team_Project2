@@ -40,14 +40,14 @@
         <TableView fx:id="gradesTable">
             <columns>
                 <TableColumn text="Course Id" fx:id="gradesCourseIdColumn" prefWidth="150.0" />
-                <TableColumn text="Course Name" fx:id="gradesCourseNameColumn" prefWidth="150.0" />
+                <TableColumn text="Course Id" fx:id="gradesCourseNameColumn" prefWidth="150.0" />
                 <TableColumn text="Assignment Name" fx:id="assignmentNameColumn" prefWidth="150.0" />
                 <TableColumn text="Grade" fx:id="gradeColumn" prefWidth="150.0" />
             </columns>
         </TableView>
         <HBox>
             <Label>Add Assignment: </Label>
-            <TextField fx:id="assignmentIdField" promptText="Enter Assignment Id" />
+            <TextField fx:id="assignmentNameField" promptText="Enter Assignment Name" />
             <Button text="Add" fx:id="addGradeButton" onAction="#addGrade" />
         </HBox>
         <HBox>

@@ -32,10 +32,11 @@ public class FileUtil {
   //////////////////////////////////////////////////////////////////// sign up
 
   public static void logInCheck(
-      String email,
-      String password,
-      Consumer<User> onSuccess,
-      Runnable onFailure) {
+    String email,
+    String password,
+    Consumer<User> onSuccess,
+    Runnable onFailure
+  ) {
     // System.out.println("Checking file...");
     String[][] results = select(2, email, USERS_TABLE); // Use select to find rows with matching email
     if (results.length == 0) {
@@ -55,8 +56,7 @@ public class FileUtil {
     if (passwordMatch) {
       // System.out.println("Account found");
       // System.out.println("Logging in as " + userData[1]);
-      User user = new User(
-          Integer.parseInt(userData[0]));
+      User user = new User(Integer.parseInt(userData[0]));
       onSuccess.accept(user); // Pass the user's name to onSuccess
     } else {
       // System.out.println("Incorrect password");
@@ -75,7 +75,7 @@ public class FileUtil {
       Files.createDirectories(Paths.get("database"));
     } catch (IOException e) {
       System.out.println("Error creating database directory"); // if this fails and there is no database directory, the
-                                                               // rest will fail
+      // rest will fail
       e.printStackTrace();
     }
 
@@ -99,7 +99,9 @@ public class FileUtil {
 
     try {
       FileWriter writer = new FileWriter(ASSIGNMENTS_TABLE);
-      writer.write("Assignment_Id, Course_Id, User_Id, Assignment_Name, Grade\n");
+      writer.write(
+        "Assignment_Id, Course_Id, User_Id, Assignment_Name, Grade\n"
+      );
       writer.close();
     } catch (IOException e) {
       System.out.println("Error creating assignments table");
@@ -116,10 +118,11 @@ public class FileUtil {
   //////////////////////////////////////////////////////////////////// id
 
   public static void createAccount(
-      String name,
-      String email,
-      String password,
-      boolean isProfessor) {
+    String name,
+    String email,
+    String password,
+    boolean isProfessor
+  ) {
     if (Files.exists(Paths.get(USERS_TABLE))) { // check if file exists, if not -> initialize database
       // System.out.println("File exists");
     } else {
@@ -131,7 +134,8 @@ public class FileUtil {
     // if it does, return
     // if it doesn't, create account
     try (
-        BufferedReader reader = new BufferedReader(new FileReader(USERS_TABLE))) {
+      BufferedReader reader = new BufferedReader(new FileReader(USERS_TABLE))
+    ) {
       String line;
       while ((line = reader.readLine()) != null) {
         String[] data = line.split(",");
@@ -148,8 +152,9 @@ public class FileUtil {
     String hashedPassword = HashingUtil.hashPassword(password);
 
     insert(
-        new String[] { name, email, hashedPassword, String.valueOf(isProfessor) },
-        USERS_TABLE);
+      new String[] { name, email, hashedPassword, String.valueOf(isProfessor) },
+      USERS_TABLE
+    );
   }
 
   //////////////////////////////////////////////////////////////////// insert,
@@ -198,8 +203,9 @@ public class FileUtil {
   public static void delete(String id, String table) throws IOException {
     String temp = "temp.csv";
     try (
-        BufferedReader reader = new BufferedReader(new FileReader(table));
-        FileWriter writer = new FileWriter("temp.csv")) {
+      BufferedReader reader = new BufferedReader(new FileReader(table));
+      FileWriter writer = new FileWriter("temp.csv")
+    ) {
       reader.readLine(); // skip header
 
       String line;
@@ -218,6 +224,37 @@ public class FileUtil {
       Files.move(Paths.get(temp), Paths.get(table));
     } catch (IOException e) {
       System.out.println("Error deleting file");
+      e.printStackTrace();
+    }
+  }
+
+  // update a specific column in a row identified by its ID
+
+  public static void update(String id, int col, String newValue, String table)
+    throws IOException {
+    String temp = "temp.csv";
+    try (
+      BufferedReader reader = new BufferedReader(new FileReader(table));
+      FileWriter writer = new FileWriter(temp)
+    ) {
+      String header = reader.readLine(); // Read and write the header
+      writer.write(header + "\n");
+
+      String line;
+      while ((line = reader.readLine()) != null) {
+        String[] data = line.split(",");
+        if (data[0].equals(id)) {
+          data[col] = newValue; // Update the specified column
+        }
+        writer.write(String.join(",", data) + "\n");
+      }
+    }
+
+    try {
+      Files.delete(Paths.get(table));
+      Files.move(Paths.get(temp), Paths.get(table));
+    } catch (IOException e) {
+      System.out.println("Error updating file");
       e.printStackTrace();
     }
   }
