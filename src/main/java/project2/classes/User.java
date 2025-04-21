@@ -1,100 +1,58 @@
 package project2.classes;
 
-import java.util.ArrayList;
 import java.util.List;
 import project2.project2.utils.FileUtil;
 
 public class User {
-    private int id;
-    private String name;
-    private String email;
-    private Boolean isProfessor;
-    private List<Course> courses;
-    private List<Grade> grades;
 
-    public User(int id, String name, String email, Boolean isProfessor) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.isProfessor = isProfessor;
+  private int id;
+  private String name;
+  private String email;
+  private Boolean isProfessor;
+  private List<String[]> courses; // List of courses the user is enrolled in or teaches
 
-        if (isProfessor) {
-            // get all courses with user id as professor id
-            List<Course> coursesTaught = new ArrayList<>();
+  // private List<String[]> grades; // List of grades the user has received
 
-            System.out.println("getting courses taught by " + name);
-            List<String[]> results = FileUtil.select(2, String.valueOf(id), "database/courses.csv");
-            System.out.println("results: " + results);
+  public User(int id, String name, String email, Boolean isProfessor) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+    this.isProfessor = isProfessor;
 
-            for (String[] course : results) {
-                coursesTaught.add(new Course(Integer.parseInt(course[0]), course[1], Integer.parseInt(course[2])));
-            }
-
-            this.courses = coursesTaught;
-        } else {
-            // get all courses by getting the course id from the grades that has matching
-            // user id as well as getting grades along with it
-            List<Grade> studentGrades = new ArrayList<>();
-            System.out.println("getting courses taken by " + name);
-            List<String[]> results = FileUtil.select(1, String.valueOf(id), "database/grades.csv");
-            System.out.println("results: " + results);
-            for (String[] grade : results) {
-                studentGrades.add(new Grade(Integer.parseInt(grade[0]), Integer.parseInt(grade[1]),
-                        Integer.parseInt(grade[2]), Integer.parseInt(grade[3]), Double.parseDouble(grade[4])));
-            }
-
-            this.grades = studentGrades;
-
-            List<Course> studentCourses = new ArrayList<>();
-            for (Grade grade : studentGrades) {
-                List<String[]> courseResults = FileUtil.select(0, String.valueOf(grade.getCourseId()), "courses.csv");
-                for (String[] course : courseResults) {
-                    studentCourses.add(new Course(Integer.parseInt(course[0]), course[1], Integer.parseInt(course[2])));
-                }
-            }
-            this.courses = studentCourses;
-        }
+    if (isProfessor) {
+      fetchCourses(2); // Fetch courses taught by the professor
+    } else {
+      fetchCourses(1); // Fetch courses enrolled in by the student
     }
+  }
 
-    public int getId() {
-        return id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  public Boolean getIsProfessor() {
+    return isProfessor;
+  }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  public void fetchCourses(int col) {
+    this.courses = FileUtil.select(
+      col,
+      String.valueOf(this.id),
+      FileUtil.COURSES_TABLE
+    );
+  }
+  // public void fetchGrades(int col) {
+  //     this.grades = FileUtil.select(col, String.valueOf(this.id), FileUtil.GRADES_TABLE);
 
-    public Boolean getIsProfessor() {
-        return isProfessor;
-    }
-
-    public void setCourses(List<Course> courses) {
-        this.courses = courses;
-    }
-
-    public List<Course> getCourses() {
-        return courses;
-    }
-
-    public void setGrades(List<Grade> grades) {
-        this.grades = grades;
-    }
-
-    public List<Grade> getGrades() {
-        return grades;
-    }
+  // }
 
 }
 /*
