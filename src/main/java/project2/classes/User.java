@@ -1,6 +1,10 @@
 package project2.classes;
 
+import java.io.File;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import project2.project2.utils.FileUtil;
 
 public class User {
@@ -9,20 +13,38 @@ public class User {
   private String name;
   private String email;
   private Boolean isProfessor;
-  private List<String[]> courses; // List of courses the user is enrolled in or teaches
+
+  private static String[][] courses;
+  private String[][] grades;
 
   // private List<String[]> grades; // List of grades the user has received
 
-  public User(int id, String name, String email, Boolean isProfessor) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-    this.isProfessor = isProfessor;
+  public User(int id) {
+    String[][] userData = FileUtil.select(0, String.valueOf(id), FileUtil.USERS_TABLE);
+    this.id = Integer.parseInt(userData[0][0]);
+    this.name = userData[0][1];
+    this.email = userData[0][2];
+    this.isProfessor = Boolean.parseBoolean(userData[0][4]);
 
     if (isProfessor) {
-      fetchCourses(2); // Fetch courses taught by the professor
+      this.courses = FileUtil.select(2, String.valueOf(id), FileUtil.COURSES_TABLE);
     } else {
-      fetchCourses(1); // Fetch courses enrolled in by the student
+      this.grades = FileUtil.select(2, String.valueOf(id), FileUtil.ASSIGNMENTS_TABLE);
+
+      Set<String> courseIdSet = new HashSet<>();
+      for (String[] grade : grades) {
+        courseIdSet.add(grade[0]);
+      }
+
+      List<String[]> courseList = new java.util.ArrayList<>();
+      for (String courseId : courseIdSet) {
+        String[][] courseData = FileUtil.select(0, courseId, FileUtil.COURSES_TABLE);
+        courseList.add(courseData[0]);
+      }
+      this.courses = new String[courseList.size()][];
+      for (int i = 0; i < courseList.size(); i++) {
+        this.courses[i] = courseList.get(i);
+      }
     }
   }
 
@@ -42,42 +64,12 @@ public class User {
     return isProfessor;
   }
 
-  public void fetchCourses(int col) {
-    this.courses = FileUtil.select(
-      col,
-      String.valueOf(this.id),
-      FileUtil.COURSES_TABLE
-    );
+  public static String[][] getCourses() {
+    return courses;
   }
-  // public void fetchGrades(int col) {
-  //     this.grades = FileUtil.select(col, String.valueOf(this.id), FileUtil.GRADES_TABLE);
 
-  // }
+  public String[][] getGrades() {
+    return grades;
+  }
 
 }
-/*
- * // addressed these issues, i just want to preserve jays ramblings
- * What needs to be done in this User class
- *
- * Get and Set new variables
- * Make loose methods for later on functions
- * integrate potential grade summaries
- *
- *
- * SDKNASKDBJAFBOUFOJNDFOUND
- * i dont understand what im supposed to be doing lowkey...
- *
- * okay so i make the variables and construcr
- * I ADDED SMTTTT
- * made a hella lot of getters and setters
- * continued to make loose methods for later??
- * LOOOK AT ME COMP SCI-ING?
- * btw i hate the term loose, it sounds gross
- * i thought about making some for the grades class but i think that would be a
- * bit much for now
- *
- * what's next? idfk.
- * maybe i start on the grades class while i let caleb do his nerd shit with the
- * course class?
- *
- */

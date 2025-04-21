@@ -2,29 +2,29 @@ package project2.classes;
 
 public class Grade {
     private int id;
-    private int userId;
     private int courseId;
-    private int assignmentId;
+    private int userId;
+    private String name;
     private Double grade; 
 
-    public Grade(int id, int userId, int courseId, int assignmentId, Double grade) {
+    public Grade(int id, int courseId, int userId, String name, Double grade) {
         this.id = id;
-        this.userId = userId;
         this.courseId = courseId;
-        this.assignmentId = assignmentId;
+        this.userId = userId;
+        this.name = name;
         this.grade = grade;
     }
     public int getId() {
         return id;
     }
-    public int getUserId() {
-        return userId;
-    }
     public int getCourseId() {
         return courseId;
     }
-    public int getAssignmentId() {
-        return assignmentId;
+    public int getUserId() {
+        return userId;
+    }
+    public String getName() {
+        return name;
     }
     public Double getGrade() {
         return grade;

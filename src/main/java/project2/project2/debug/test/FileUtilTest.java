@@ -45,10 +45,10 @@ public class FileUtilTest {
             System.out.println("\nTesting account creation...");
             FileUtil.createAccount("John Doe", "john@example.com", "password123", false);
 
-            List<String[]> users = FileUtil.select(2, "john@example.com", "database/users.csv");
-            assertEquals(1, users.size());
-            assertEquals("John Doe", users.get(0)[1]);
-            assertEquals("john@example.com", users.get(0)[2]);
+            String[][] users = FileUtil.select(2, "john@example.com", "database/users.csv");
+            assertEquals(1, users[0]);
+            assertEquals("John Doe", users[0][1]);
+            assertEquals("john@example.com", users[0][2]);
 
             System.out.println("\nAccount created successfully.");
         }
@@ -59,9 +59,9 @@ public class FileUtilTest {
             FileUtil.createAccount("John Doe", "john@example.com", "password123", false);
             FileUtil.createAccount("Jane Doe", "john@example.com", "password456", false);
 
-            List<String[]> users = FileUtil.select(2, "john@example.com", "database/users.csv");
-            assertEquals(1, users.size());
-            assertEquals("John Doe", users.get(0)[1]);
+            String[][] users = FileUtil.select(2, "john@example.com", "database/users.csv");
+            assertEquals(1, users[0]);
+            assertEquals("John Doe", users[0][1]);
             System.out.println("\nDuplicate email test passed. Only one account created.");
         }
 
@@ -101,10 +101,10 @@ public class FileUtilTest {
             System.out.println("\nTesting insert and select...");
             FileUtil.insert(new String[]{"Test Course", "Professor A"}, "database/courses.csv");
 
-            List<String[]> courses = FileUtil.select(1, "Test Course", "database/courses.csv");
-            System.out.println("Courses found: " + courses.get(0)[0]);
-            assertEquals(1, courses.size());
-            assertEquals("Test Course", courses.get(0)[1]);
+            String[][] courses = FileUtil.select(1, "Test Course", "database/courses.csv");
+            System.out.println("Courses found: " + courses[0][0]);
+            assertEquals(1, courses[0]);
+            assertEquals("Test Course", courses[0][1]);
 
             System.out.println("\nInsert and select test passed.");
         }
@@ -114,13 +114,13 @@ public class FileUtilTest {
             System.out.println("\nTesting delete...");
             FileUtil.createAccount("John Doe", "john@example.com", "password123", false);
 
-            List<String[]> usersBefore = FileUtil.select(2, "john@example.com", "database/users.csv");
-            assertEquals(1, usersBefore.size());
+            String[][] usersBefore = FileUtil.select(2, "john@example.com", "database/users.csv");
+            assertEquals(1, usersBefore[0]);
 
-            FileUtil.delete(usersBefore.get(0)[0], "database/users.csv");
+            FileUtil.delete(usersBefore[0][0], "database/users.csv");
 
-            List<String[]> usersAfter = FileUtil.select(2, "john@example.com", "database/users.csv");
-            assertTrue(usersAfter.isEmpty());
+            String[][] usersAfter = FileUtil.select(2, "john@example.com", "database/users.csv");
+            assertTrue(usersAfter.length == 0, "User should be deleted");
 
             System.out.println("\nDelete test passed.");
         }

@@ -50,7 +50,7 @@ public class loginController {
   // sign up button clicked -> open sign up view
   @FXML
   private void promptSignUp(ActionEvent event) {
-    System.out.println("Prompting sign up...");
+    // System.out.println("Prompting sign up...");
     try {
       FXMLLoader loader = new FXMLLoader(
           getClass().getResource("/project2/project2/signup-view.fxml"));
@@ -66,7 +66,7 @@ public class loginController {
 
   // open log in view with name passed in
   private void openHomeView(User user) {
-    System.out.println("opening log in view");
+    // System.out.println("opening log in view");
     try {
       FXMLLoader loader = new FXMLLoader(
           getClass().getResource("/project2/project2/home-view.fxml"));

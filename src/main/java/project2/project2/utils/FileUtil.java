@@ -21,53 +21,60 @@ public class FileUtil {
   public static final String GRADES_TABLE = "database/grades.csv";
   public static final String ASSIGNMENTS_TABLE = "database/assignments.csv";
 
-  //////////////////////////////////////////////////////////////////// check input credentials against database and either login, or prompt to sign up
+  //////////////////////////////////////////////////////////////////// check input
+  //////////////////////////////////////////////////////////////////// credentials
+  //////////////////////////////////////////////////////////////////// against
+  //////////////////////////////////////////////////////////////////// database
+  //////////////////////////////////////////////////////////////////// and either
+  //////////////////////////////////////////////////////////////////// login, or
+  //////////////////////////////////////////////////////////////////// prompt to
+  //////////////////////////////////////////////////////////////////// sign up
 
   public static void logInCheck(
-    String email,
-    String password,
-    Consumer<User> onSuccess,
-    Runnable onFailure
-  ) {
-    System.out.println("Checking file...");
-    List<String[]> results = select(2, email, USERS_TABLE); // Use select to find rows with matching email
-    if (results.isEmpty()) {
-      System.out.println("Account not found");
+      String email,
+      String password,
+      Consumer<User> onSuccess,
+      Runnable onFailure) {
+    // System.out.println("Checking file...");
+    String[][] results = select(2, email, USERS_TABLE); // Use select to find rows with matching email
+    if (results.length == 0) {
+      // System.out.println("Account not found");
       onFailure.run();
       return;
     }
 
-    String[] userData = results.get(0); // Get the first matching row (should only be one but select returns a list)
-    System.out.println("Hashed from db: '" + userData[3] + "'");
-    System.out.println("Password from input: '" + password + "'");
+    String[] userData = results[0]; // Get the first matching row (should only be one but select returns a list)
+    // System.out.println("Hashed from db: '" + userData[3] + "'");
+    // System.out.println("Password from input: '" + password + "'");
 
     boolean passwordMatch = BCrypt.checkpw(password, userData[3].trim()); // Check hashed password
 
-    System.out.println("Password match: " + passwordMatch);
+    // System.out.println("Password match: " + passwordMatch);
 
     if (passwordMatch) {
-      System.out.println("Account found");
-      System.out.println("Logging in as " + userData[1]);
+      // System.out.println("Account found");
+      // System.out.println("Logging in as " + userData[1]);
       User user = new User(
-        Integer.parseInt(userData[0]),
-        userData[1],
-        userData[2],
-        Boolean.parseBoolean(userData[4])
-      );
+          Integer.parseInt(userData[0]));
       onSuccess.accept(user); // Pass the user's name to onSuccess
     } else {
-      System.out.println("Incorrect password");
+      // System.out.println("Incorrect password");
       onFailure.run(); // password does not match -> prompt to sign up
     }
   }
 
-  //////////////////////////////////////////////////////////////////// check if file exists, if not create it
+  //////////////////////////////////////////////////////////////////// check if
+  //////////////////////////////////////////////////////////////////// file
+  //////////////////////////////////////////////////////////////////// exists, if
+  //////////////////////////////////////////////////////////////////// not create
+  //////////////////////////////////////////////////////////////////// it
 
   public static void initializeTables() {
     try {
       Files.createDirectories(Paths.get("database"));
     } catch (IOException e) {
-      System.out.println("Error creating database directory"); // if this fails and there is no database directory, the rest will fail
+      System.out.println("Error creating database directory"); // if this fails and there is no database directory, the
+                                                               // rest will fail
       e.printStackTrace();
     }
 
@@ -90,17 +97,8 @@ public class FileUtil {
     }
 
     try {
-      FileWriter writer = new FileWriter(GRADES_TABLE);
-      writer.write("Grade_Id, User_Id, Course_Id, Assignment_Id, Grade\n");
-      writer.close();
-    } catch (IOException e) {
-      System.out.println("Error creating grades table");
-      e.printStackTrace();
-    }
-
-    try {
       FileWriter writer = new FileWriter(ASSIGNMENTS_TABLE);
-      writer.write("Assignment_Id, Assignment_Name\n");
+      writer.write("Assignment_Id, Course_Id, User_Id, Assignment_Name, Grade\n");
       writer.close();
     } catch (IOException e) {
       System.out.println("Error creating assignments table");
@@ -108,18 +106,23 @@ public class FileUtil {
     }
   }
 
-  //////////////////////////////////////////////////////////////////// create account, ensuring no duplicate emails and incrementing id
+  //////////////////////////////////////////////////////////////////// create
+  //////////////////////////////////////////////////////////////////// account,
+  //////////////////////////////////////////////////////////////////// ensuring no
+  //////////////////////////////////////////////////////////////////// duplicate
+  //////////////////////////////////////////////////////////////////// emails and
+  //////////////////////////////////////////////////////////////////// incrementing
+  //////////////////////////////////////////////////////////////////// id
 
   public static void createAccount(
-    String name,
-    String email,
-    String password,
-    boolean isProfessor
-  ) {
+      String name,
+      String email,
+      String password,
+      boolean isProfessor) {
     if (Files.exists(Paths.get(USERS_TABLE))) { // check if file exists, if not -> initialize database
-      System.out.println("File exists");
+      // System.out.println("File exists");
     } else {
-      System.out.println("File does not exist");
+      // System.out.println("File does not exist");
       initializeTables();
     }
 
@@ -127,8 +130,7 @@ public class FileUtil {
     // if it does, return
     // if it doesn't, create account
     try (
-      BufferedReader reader = new BufferedReader(new FileReader(USERS_TABLE))
-    ) {
+        BufferedReader reader = new BufferedReader(new FileReader(USERS_TABLE))) {
       String line;
       while ((line = reader.readLine()) != null) {
         String[] data = line.split(",");
@@ -145,12 +147,15 @@ public class FileUtil {
     String hashedPassword = HashingUtil.hashPassword(password);
 
     insert(
-      new String[] { name, email, hashedPassword, String.valueOf(isProfessor) },
-      USERS_TABLE
-    );
+        new String[] { name, email, hashedPassword, String.valueOf(isProfessor) },
+        USERS_TABLE);
   }
 
-  //////////////////////////////////////////////////////////////////// insert, delete, select database methods
+  //////////////////////////////////////////////////////////////////// insert,
+  //////////////////////////////////////////////////////////////////// delete,
+  //////////////////////////////////////////////////////////////////// select
+  //////////////////////////////////////////////////////////////////// database
+  //////////////////////////////////////////////////////////////////// methods
 
   public static void insert(String[] data, String table) {
     try (FileWriter writer = new FileWriter(table, true)) {
@@ -192,9 +197,8 @@ public class FileUtil {
   public static void delete(String id, String table) throws IOException {
     String temp = "temp.csv";
     try (
-      BufferedReader reader = new BufferedReader(new FileReader(table));
-      FileWriter writer = new FileWriter("temp.csv")
-    ) {
+        BufferedReader reader = new BufferedReader(new FileReader(table));
+        FileWriter writer = new FileWriter("temp.csv")) {
       reader.readLine(); // skip header
 
       String line;
@@ -219,27 +223,27 @@ public class FileUtil {
 
   // select data from table, returns a list of row arrays
   // col is the column to search, input is the value to search for
-  // for instance, if you want to select all rows with the same course id, col would be 2 and input would be the course id
+  // for instance, if you want to select all rows with the same course id, col
+  // would be 2 and input would be the course id
 
-  public static List<String[]> select(int col, String input, String table) {
-    List<String[]> results = new ArrayList<>();
+  public static String[][] select(int col, String input, String table) {
+    List<String[]> resultsList = new ArrayList<>();
     try (BufferedReader reader = new BufferedReader(new FileReader(table))) {
       String line;
       while ((line = reader.readLine()) != null) {
-        System.out.println("Line: " + line);
+        // System.out.println("Line: " + line);
         String[] data = line.split(",");
-        // System.out.println("id: " + data[0]);
-        // System.out.println("col: " + data[col]);
-        System.out.println("Comparing: '" + data[col].trim() + "'' with '" + input.trim() + "'");
+        // System.out.println("Comparing: '" + data[col].trim() + "'' with '" +
+        // input.trim() + "'");
         if (data[col].trim().equals(input.trim())) {
-          System.out.println("Found match: " + line);
-          results.add(data);
+          // System.out.println("Found match: " + line);
+          resultsList.add(data);
         }
       }
     } catch (Exception e) {
       System.out.println("Error selecting data");
       e.printStackTrace();
     }
-    return results;
+    return resultsList.toArray(new String[0][]);
   }
 }
