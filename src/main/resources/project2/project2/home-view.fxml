@@ -1,64 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml/1"
-    xmlns="http://javafx.com/javafx/24" fx:controller="project2.project2.controllers.homeController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
-
-    <Label text="Welcome, [Name] #[ID]" fx:id="welcomeLabel" />
-
-    <children>
-        <Button text="Close" fx:id="close" onAction="#close" />
-        <Label text="Courses" fx:id="coursesLabel" />
-
-        <TableView fx:id="coursesTable">
-            <columns>
-                <TableColumn text="Course Id" fx:id="courseIdColumn" prefWidth="150.0" />
-                <TableColumn text="Course Name" fx:id="courseNameColumn" prefWidth="150.0" />
-                <TableColumn text="Professor Id" fx:id="professorNameColumn" prefWidth="150.0" />
-            </columns>
-        </TableView>
-        <HBox>
-            <Label text="Add Course:" />
-            <TextField fx:id="courseIdField" promptText="Enter Course ID" />
-            <Button text="Add" fx:id="addCourseButton" onAction="#addCourse" />
-        </HBox>
-        <HBox>
-            <Button text="Drop Course" fx:id="drop" onAction="#drop" />
-        </HBox>
-        <Label text="Assignments" fx:id="gradesLabel" />
-        <TableView fx:id="gradesTable">
-            <columns>
-                <TableColumn text="Course Id" fx:id="gradesCourseIdColumn" prefWidth="150.0" />
-                <TableColumn text="Course Name" fx:id="gradesCourseNameColumn" prefWidth="150.0" />
-                <TableColumn text="Assignment Name" fx:id="assignmentNameColumn" prefWidth="150.0" />
-                <TableColumn text="Grade" fx:id="gradeColumn" prefWidth="150.0" />
-            </columns>
-        </TableView>
-        <HBox>
-            <Label>Add Assignment: </Label>
-            <TextField fx:id="assignmentIdField" promptText="Enter Assignment Id" />
-            <Button text="Add" fx:id="addGradeButton" onAction="#addGrade" />
-        </HBox>
-        <HBox>
-            <Label text="Edit Grade:" />
-            <TextField fx:id="editGradeField" promptText="Grade" />
-            <Button text="Save Changes" fx:id="saveGradeButton" onAction="#saveGradeChanges" />
-        </HBox>
-        <HBox>
-            <Button text="Delete" fx:id="deleteGradeButton" onAction="#deleteGrade" />
-        </HBox>
-    </children>
-
-
+<VBox alignment="TOP_CENTER" prefHeight="600" prefWidth="800" spacing="15" style="-fx-background-color: #2D3139; -fx-padding: 20;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="your.package.HomeController">
+   <children>
+   
+       <!-- Welcome Message -->
+       <Label fx:id="welcomeLabel" style="-fx-font-size: 24; -fx-text-fill: green; -fx-background-color: white;" text="ahhh scary title" />
+   
+       <!-- Search Fields -->
+       <HBox minHeight="-Infinity" prefHeight="422.0" prefWidth="602.0" spacing="100.0">
+         <children>
+            <TableView prefHeight="422.0" prefWidth="247.0">
+              <columns>
+                <TableColumn prefWidth="75.0" text="Course ID" />
+                <TableColumn prefWidth="94.4000244140625" text="Course Name" />
+                  <TableColumn prefWidth="75.0" text="Professor" />
+              </columns>
+            </TableView>
+         </children>
+       </HBox>
+      <HBox prefHeight="68.0" prefWidth="760.0">
+         <children>
+            <TextField prefHeight="26.0" prefWidth="339.0" promptText="Course ID" />
+            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="70.0" text="Button" />
+         </children>
+      </HBox>
+   </children>
 </VBox>
