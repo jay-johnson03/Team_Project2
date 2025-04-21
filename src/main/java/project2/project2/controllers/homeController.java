@@ -44,13 +44,7 @@ public class homeController {
   }
 
   public void populate() {
-    System.out.println(
-      user.getName() + "\n" //////////////////////////////////////////////////////// <---------------- user is null | bookmark
-    + user.getEmail() + "\n"
-    + user.getId() + "\n"
-    + user.getCourses() + "\n"
-    + user.getGrades()
-    );
+
   }
 
   @FXML
