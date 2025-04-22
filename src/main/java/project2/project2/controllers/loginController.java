@@ -76,7 +76,7 @@ public class loginController {
         stage.setTitle("Professor Dashboard");
       } else {
         loader = new FXMLLoader(getClass().getResource("/project2/project2/home-view.fxml"));
-        stage.setTitle("Student Dashboard");
+        stage.setTitle("Student Dashboard"); 
       }
 
       stage.setScene(new Scene(loader.load()));

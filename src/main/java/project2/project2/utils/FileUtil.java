@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import org.mindrot.jbcrypt.BCrypt;
+
+import project2.classes.Course;
 import project2.classes.User;
 
 public class FileUtil {
@@ -246,5 +248,34 @@ public class FileUtil {
       e.printStackTrace();
     }
     return resultsList.toArray(new String[0][]);
+  }
+
+
+
+
+  // this is for courses in either the home page or professor page
+  private static final List<Course> courses = new ArrayList<>();
+  static {
+    courses.add(new Course(1, "Programming I", 101));
+    courses.add(new Course(2, "Programming II", 102));
+    courses.add(new Course(3, "Data Structures", 102));
+    courses.add(new Course(4, "Algorithms", 104));
+    courses.add(new Course(5, "Computer Architecture", 103));
+    courses.add(new Course(6, "Operating Systems", 103));
+    courses.add(new Course(7, "Database Systems", 104));
+  }
+
+  //method to retrieve courses
+  public static List<Course> getAllCourses() {
+    return new ArrayList<>(courses);
+  }
+  // method to add a course 
+  public static void addCourse(Course course) {
+    courses.add(course);
+  }
+  // method to remove a course
+  public static void removeCourseByID(int courseId) {
+    //only removes the course if it exists
+    courses.removeIf(course -> course.getId() == courseId);
   }
 }
