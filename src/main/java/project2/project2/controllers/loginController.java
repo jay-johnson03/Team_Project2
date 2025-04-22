@@ -68,18 +68,31 @@ public class loginController {
   private void openHomeView(User user) {
     // System.out.println("opening log in view");
     try {
-      FXMLLoader loader = new FXMLLoader(
-          getClass().getResource("/project2/project2/home-view.fxml"));
+      FXMLLoader loader;
       Stage stage = new Stage();
-      stage.setScene(new Scene(loader.load()));
-      stage.setTitle("Home");
 
-      homeController homeController = loader.getController();
-      homeController.setUser(user);
+      if (user.getIsProfessor()) {
+        loader = new FXMLLoader(getClass().getResource("/project2/project2/professor-view.fxml"));
+        stage.setTitle("Professor Dashboard");
+      } else {
+        loader = new FXMLLoader(getClass().getResource("/project2/project2/home-view.fxml"));
+        stage.setTitle("Student Dashboard");
+      }
+
+      stage.setScene(new Scene(loader.load()));
+      if (user.getIsProfessor()) {
+        professorController professorController = loader.getController();
+        professorController.setUser(user);
+      } else {
+        homeController homeController = loader.getController();
+        homeController.setUser(user);
+      }
+
       stage.show();
     } catch (Exception e) {
       e.printStackTrace();
     }
+
   }
   //
 
