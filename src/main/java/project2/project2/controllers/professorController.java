@@ -71,7 +71,7 @@ public class professorController {
   }
 
   public void initializeCoursesTable() {
-    welcomeLabel.setText("Welcome, " + user.getName() + " #" + user.getId());
+    welcomeLabel.setText("Welcome, Professor" + user.getName() + " #" + user.getId());
 
     courseIdColumn.setCellValueFactory(
         new PropertyValueFactory<Course, String>("id"));

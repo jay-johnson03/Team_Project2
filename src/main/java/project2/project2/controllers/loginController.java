@@ -72,7 +72,7 @@ public class loginController {
       Stage stage = new Stage();
 
       if (user.getIsProfessor()) {
-        loader = new FXMLLoader(getClass().getResource("/project2/project2/professor-view.fxml"));
+        loader = new FXMLLoader(getClass().getResource("/project2/project2/professor-home.fxml"));
         stage.setTitle("Professor Dashboard");
       } else {
         loader = new FXMLLoader(getClass().getResource("/project2/project2/home-view.fxml"));

@@ -1,4 +1,4 @@
-module project2.project2 {
+module project2 {
     requires transitive javafx.controls; // requires javafx.controls and all of its transitive dependencies, which
                                          // includes javafx.base, javafx.graphics, and javafx.fxml
     requires javafx.fxml;
