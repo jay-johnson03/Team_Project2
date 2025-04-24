@@ -1,6 +1,11 @@
 package project2.project2.controllers;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Observable;
 import javafx.collections.FXCollections;
@@ -180,7 +185,7 @@ public class homeController {
             if (grade.next()) {
               Grade selectedGrade = grade.getList().get(0);
               int selectedGradeId = selectedGrade.getId();
-              System.out.println("Selected grade: " + selectedGradeId);
+              //System.out.println("Selected grade: " + selectedGradeId);
             }
           }
         }
@@ -202,13 +207,13 @@ public class homeController {
   @FXML
   void saveGradeChanges(ActionEvent event) {
     if (selectedGrade == null) {
-      System.out.println("No grade selected.");
+      //System.out.println("No grade selected.");
       return;
     }
 
     String newGradeValue = editGradeField.getText();
     if (newGradeValue.isEmpty()) {
-      System.out.println("Grade value cannot be empty.");
+      //System.out.println("Grade value cannot be empty.");
       return;
     }
 
@@ -225,8 +230,8 @@ public class homeController {
 
       editGradeField.clear();
     } catch (IOException e) {
-      System.out.println("Error updating grade.");
-      e.printStackTrace();
+      //System.out.println("Error updating grade.");
+      //e.printStackTrace();
     }
   }
 
@@ -235,13 +240,13 @@ public class homeController {
   void addCourse(ActionEvent event) {
     String courseId = courseIdField.getText();
     if (courseId.isEmpty()) {
-      System.out.println("Course ID cannot be empty.");
+      //System.out.println("Course ID cannot be empty.");
       return;
     }
 
     for (Course course : coursesList) {
       if (course.getId() == Integer.parseInt(courseId)) {
-        System.out.println("You are already enrolled in this course.");
+        //System.out.println("You are already enrolled in this course.");
         return;
       }
     }
@@ -252,7 +257,7 @@ public class homeController {
       FileUtil.COURSES_TABLE
     );
     if (courseEntry.length == 0) {
-      System.out.println("Course not found.");
+      //System.out.println("Course not found.");
       return;
     }
 
@@ -260,13 +265,17 @@ public class homeController {
       String[] data = { courseId, String.valueOf(user.getId()) };
       FileUtil.insert(data, FileUtil.ENROLLMENTS_TABLE);
 
-      coursesList.clear();
-      initializeCoursesTable();
-
-      System.out.println("Course added successfully.");
+      coursesList.add(
+        new Course(
+          Integer.parseInt(courseEntry[0][0]),
+          courseEntry[0][1],
+          Integer.parseInt(courseEntry[0][2])
+        )
+      );
+      //System.out.println("Course added successfully.");
     } catch (Exception e) {
-      System.out.println("Error adding course.");
-      e.printStackTrace();
+      //System.out.println("Error adding course.");
+      //e.printStackTrace();
     }
   }
 
@@ -278,12 +287,43 @@ public class homeController {
       return;
     }
 
-    try {
-      FileUtil.delete(
-        String.valueOf(selectedCourse.getId()),
-        FileUtil.ENROLLMENTS_TABLE
+    String temp = "temp.csv";
+    try (
+      BufferedReader reader = new BufferedReader(
+        new FileReader(FileUtil.ENROLLMENTS_TABLE)
       );
+      FileWriter writer = new FileWriter(temp)
+    ) {
+      String header = reader.readLine(); // Read the header
+      if (header != null) {
+        writer.write(header + "\n"); // Write the header to the temp file
+      }
 
+      String line;
+      while ((line = reader.readLine()) != null) {
+        String[] data = line.split(",");
+        System.out.println("Checking row: " + String.join(",", data));
+        // Skip the row where both Course_Id and User_Id match
+        if (
+          data[1].equals(String.valueOf(selectedCourse.getId())) &&
+          data[2].equals(String.valueOf(user.getId()))
+        ) {
+          System.out.println("Skipping row: " + String.join(",", data));
+          continue;
+        }
+        writer.write(line + "\n");
+      }
+    } catch (IOException e) {
+      System.out.println("Error reading or writing the file.");
+      e.printStackTrace();
+      return;
+    }
+
+    try {
+      Files.delete(Paths.get(FileUtil.ENROLLMENTS_TABLE));
+      Files.move(Paths.get(temp), Paths.get(FileUtil.ENROLLMENTS_TABLE));
+
+      // Update the ObservableList only after the file is updated
       coursesList.remove(selectedCourse);
       coursesTable.refresh();
 
@@ -292,7 +332,7 @@ public class homeController {
 
       System.out.println("Course dropped successfully.");
     } catch (IOException e) {
-      System.out.println("Error dropping course.");
+      System.out.println("Error replacing the ENROLLMENTS_TABLE file.");
       e.printStackTrace();
     }
   }
@@ -301,13 +341,13 @@ public class homeController {
   @FXML
   void addGrade(ActionEvent event) {
     if (selectedCourse == null) {
-      System.out.println("No course selected.");
+      //System.out.println("No course selected.");
       return;
     }
 
     String assignmentName = assignmentNameField.getText();
     if (assignmentName.isEmpty()) {
-      System.out.println("Assignment name cannot be empty.");
+      //System.out.println("Assignment name cannot be empty.");
       return;
     }
 
@@ -334,7 +374,7 @@ public class homeController {
         FileUtil.ASSIGNMENTS_TABLE
       );
     } catch (IOException e) {
-      e.printStackTrace();
+      //e.printStackTrace();
     }
     gradesList.remove(selectedGrade);
     gradesTable.refresh();
@@ -357,10 +397,10 @@ public class homeController {
    * );
    *
    * for (String[] grade : grades) { // this is how to access multiple results
-   *   System.out.println("Course: " + grade[0]);
+   *   //System.out.println("Course: " + grade[0]);
    * }
    *
    * String firstGrade = grades.get(0)[0];
-   * System.out.println("First grade: " + firstGrade); // this is how to access a single result
+   * //System.out.println("First grade: " + firstGrade); // this is how to access a single result
    */
 }
