@@ -22,7 +22,8 @@ public class User {
     this.id = Integer.parseInt(userData[0][0]);
     this.name = userData[0][1];
     this.email = userData[0][2];
-    this.isProfessor = Boolean.parseBoolean(userData[0][4]);
+    // this.isProfessor = Boolean.parseBoolean(userData[0][4]);
+    this.isProfessor = userData[0][4].trim().equalsIgnoreCase("true") || userData[0][4].trim().equals("1");
 
     if (isProfessor) {
       this.courses = FileUtil.select(2, String.valueOf(id), FileUtil.COURSES_TABLE);

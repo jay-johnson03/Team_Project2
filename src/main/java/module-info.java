@@ -1,4 +1,4 @@
-module project2.project2 {
+module project2 {
     requires transitive javafx.controls; // requires javafx.controls and all of its transitive dependencies, which
                                          // includes javafx.base, javafx.graphics, and javafx.fxml
     requires javafx.fxml;
@@ -16,6 +16,7 @@ module project2.project2 {
 
     // exports the project2.project2 package so that other modules can access the
     // classes in this package
+    exports project2.classes;
     exports project2.project2;
     exports project2.project2.controllers to javafx.fxml;
 }
