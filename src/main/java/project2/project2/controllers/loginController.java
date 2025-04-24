@@ -74,7 +74,7 @@ public class loginController {
       
       if (user.getIsProfessor()) {
         System.out.println("Redirecting to Professor Dashboard...");
-        loader = new FXMLLoader(getClass().getResource("/project2/project2/professor-home.fxml"));
+        loader = new FXMLLoader(getClass().getResource("professor-home.fxml"));
         stage.setTitle("Professor Dashboard");
       } else {
         System.out.println("Redirecting to Student Dashboard...");

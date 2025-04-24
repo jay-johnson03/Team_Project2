@@ -1,11 +1,8 @@
 package project2.project2.controllers;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Observable;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
+// import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,7 +12,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -54,15 +50,18 @@ public class professorController {
   private TextField editGradeField;
   @FXML
   private Button saveGradeButton;
+  @FXML
+  private Button searchAvailable;
+  @FXML
+  TableView<Course> courseOverviewTable;
+  @FXML
+  
 
   private User user;
 
   private ObservableList<Course> coursesList = FXCollections.observableArrayList();
 
-  private ObservableList<Grade> gradesList = FXCollections.observableArrayList();
-
-  private Course selectedCourse;
-  private Grade selectedGrade;
+  // private ObservableList<Grade> gradesList = FXCollections.observableArrayList();
 
   public void setUser(User user) {
     this.user = user;
@@ -80,7 +79,7 @@ public class professorController {
     professorNameColumn.setCellValueFactory(
         new PropertyValueFactory<Course, String>("professorId"));
 
-    for (String[] course : user.getCourses()) {
+    for (String[] course : User.getCourses()) {
       coursesList.add(new Course(Integer.parseInt(course[0]), course[1], Integer.parseInt(course[2])));
     }
 
@@ -89,6 +88,8 @@ public class professorController {
     TableView.TableViewSelectionModel<Course> selectionModel = coursesTable.getSelectionModel();
     ObservableList<Course> selectedItems = selectionModel.getSelectedItems();
 
+
+    // comment out later to use for the grades 
    /* selectedItems.addListener(new ListChangeListener<Course>() {
       @Override
       public void onChanged(Change<? extends Course> course) {
@@ -119,10 +120,18 @@ public class professorController {
     TableColumn<Course, String> availableProfessorNameColumn = new TableColumn<>("Professor Name");
     professorNameColumn.setCellValueFactory(new PropertyValueFactory<Course, String>("professorName"));
 
-    availableCoursesTable.getColumns().addAll(availableCourseIdColumn, availableCourseNameColumn, availableProfessorNameColumn);
+    availableCoursesTable.getColumns().add(availableCourseIdColumn);
+    availableCoursesTable.getColumns().add(availableCourseNameColumn);
+    availableCoursesTable.getColumns().add(availableProfessorNameColumn);
 
     //putting the data into the table
     ObservableList<Course> availableCoursesList = FXCollections.observableArrayList();
+    for (String[] courseData : FileUtil.getCourses()) {
+      availableCoursesList.add(new Course(
+        Integer.parseInt(courseData[0]),
+        courseData[1],
+        Integer.parseInt(courseData[2])));
+    }
     availableCoursesTable.setItems(availableCoursesList);
 
     // my dandy enroll button 
@@ -156,21 +165,4 @@ public class professorController {
  * 
  * 
  * 
- */
-  
-
-/*
- * List<String[]> grades = FileUtil.select(
- * 1,
- * String.valueOf(user.getId()),
- * FileUtil.GRADES_TABLE
- * );
- * 
- * for (String[] grade : grades) { // this is how to access multiple results
- * System.out.println("Course: " + grade[0]);
- * }
- * 
- * String firstGrade = grades.get(0)[0];
- * System.out.println("First grade: " + firstGrade); // this is how to access a
- * single result
  */
