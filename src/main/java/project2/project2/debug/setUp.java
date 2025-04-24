@@ -32,8 +32,8 @@ public class setUp {
             writer.close();
 
         } catch (IOException e) {
-            //System.out.println("Error creating tables");
-            //e.printStackTrace();
+            System.out.println("Error creating tables");
+            e.printStackTrace();
         }
     }
 

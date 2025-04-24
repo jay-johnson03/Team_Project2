@@ -1,8 +1,11 @@
-// package project2.project2.controllers;
+package project2.project2.controllers;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Observable;
 
 import javafx.collections.FXCollections;
-// import javafx.collections.ListChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,15 +15,14 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import project2.classes.Course;
 import project2.classes.User;
 import project2.project2.utils.FileUtil;
 import project2.classes.Grade;
 
-// public class professorController {
+public class professorController {
 
   @FXML
   private Label coursesLabel;
@@ -50,47 +52,41 @@ import project2.classes.Grade;
   private TextField editGradeField;
   @FXML
   private Button saveGradeButton;
-  @FXML
-  private Button searchAvailable;
-  @FXML
-  TableView<Course> courseOverviewTable;
-  @FXML
-  
 
-//   private User user;
+  private User user;
 
-//   private ObservableList<Course> coursesList = FXCollections.observableArrayList();
+  private ObservableList<Course> coursesList = FXCollections.observableArrayList();
 
-  // private ObservableList<Grade> gradesList = FXCollections.observableArrayList();
+  private ObservableList<Grade> gradesList = FXCollections.observableArrayList();
+
+  private Course selectedCourse;
+  private Grade selectedGrade;
 
   public void setUser(User user) {
     this.user = user;
-    welcomeLabel.setText("Welcome, " + user.getName() + " #" + user.getId());
     initializeCoursesTable();
   }
 
   public void initializeCoursesTable() {
-    welcomeLabel.setText("Welcome, Professor" + user.getName() + " #" + user.getId());
+    welcomeLabel.setText("Welcome, " + user.getName() + " #" + user.getId());
 
-//     courseIdColumn.setCellValueFactory(
-//         new PropertyValueFactory<Course, String>("id"));
-//     courseNameColumn.setCellValueFactory(
-//         new PropertyValueFactory<Course, String>("name"));
-//     professorNameColumn.setCellValueFactory(
-//         new PropertyValueFactory<Course, String>("professorId"));
+    courseIdColumn.setCellValueFactory(
+        new PropertyValueFactory<Course, String>("id"));
+    courseNameColumn.setCellValueFactory(
+        new PropertyValueFactory<Course, String>("name"));
+    professorNameColumn.setCellValueFactory(
+        new PropertyValueFactory<Course, String>("professorId"));
 
-    for (String[] course : User.getCourses()) {
+    for (String[] course : user.getCourses()) {
       coursesList.add(new Course(Integer.parseInt(course[0]), course[1], Integer.parseInt(course[2])));
     }
 
-//     coursesTable.setItems(coursesList);
+    coursesTable.setItems(coursesList);
 
-//     TableView.TableViewSelectionModel<Course> selectionModel = coursesTable.getSelectionModel();
-//     ObservableList<Course> selectedItems = selectionModel.getSelectedItems();
+    TableView.TableViewSelectionModel<Course> selectionModel = coursesTable.getSelectionModel();
+    ObservableList<Course> selectedItems = selectionModel.getSelectedItems();
 
-
-    // comment out later to use for the grades 
-   /* selectedItems.addListener(new ListChangeListener<Course>() {
+    selectedItems.addListener(new ListChangeListener<Course>() {
       @Override
       public void onChanged(Change<? extends Course> course) {
         if (course.next()) {
@@ -99,70 +95,124 @@ import project2.classes.Grade;
           initializeGradesTable(selectedCourseId);
         }
       }
-    }); */
+    });
   }
-  public void searchAvailableCourses(ActionEvent event) {
-    Stage popupStage = new Stage();
-    popupStage.setTitle("Available Courses");
 
-    // make it *modal*
-    popupStage.initModality(Modality.APPLICATION_MODAL);
+  public void initializeGradesTable(int courseId) {
 
+    gradesList.clear();
 
-    // adding all of the necessary table things 
-    TableView<Course> availableCoursesTable = new TableView<>();
-    TableColumn<Course, String> availableCourseIdColumn = new TableColumn<>("Course ID");
-    courseIdColumn.setCellValueFactory(new PropertyValueFactory<Course, String>("id"));
+    gradesCourseIdColumn.setCellValueFactory(
+        new PropertyValueFactory<Grade, String>("id"));
+    gradesCourseNameColumn.setCellValueFactory(
+        new PropertyValueFactory<Grade, String>("userId"));
+    assignmentNameColumn.setCellValueFactory(
+        new PropertyValueFactory<Grade, String>("name"));
+    gradeColumn.setCellValueFactory(
+        new PropertyValueFactory<Grade, String>("grade"));
 
-    TableColumn<Course, String> availableCourseNameColumn = new TableColumn<>("Course Name");
-    courseNameColumn.setCellValueFactory(new PropertyValueFactory<Course, String>("name"));
+    for (String[] grade : user.getGrades()) {
+      if (Integer.parseInt(grade[1]) == courseId) {
+        gradesList.add(new Grade(
+            Integer.parseInt(grade[0]),
+            Integer.parseInt(grade[1]),
+            Integer.parseInt(grade[2]),
+            grade[3],
+            Double.parseDouble(grade[4])));
+      }
 
-    TableColumn<Course, String> availableProfessorNameColumn = new TableColumn<>("Professor Name");
-    professorNameColumn.setCellValueFactory(new PropertyValueFactory<Course, String>("professorName"));
-
-    availableCoursesTable.getColumns().add(availableCourseIdColumn);
-    availableCoursesTable.getColumns().add(availableCourseNameColumn);
-    availableCoursesTable.getColumns().add(availableProfessorNameColumn);
-
-    //putting the data into the table
-    ObservableList<Course> availableCoursesList = FXCollections.observableArrayList();
-    for (String[] courseData : FileUtil.getCourses()) {
-      availableCoursesList.add(new Course(
-        Integer.parseInt(courseData[0]),
-        courseData[1],
-        Integer.parseInt(courseData[2])));
+      gradesTable.setItems(gradesList);
+      TableView.TableViewSelectionModel<Grade> selectionModel = gradesTable
+          .getSelectionModel();
+      ObservableList<Grade> selectedItems = selectionModel
+          .getSelectedItems();
+      selectedItems.addListener(new ListChangeListener<Grade>() {
+        @Override
+        public void onChanged(Change<? extends Grade> grade) {
+          if (grade.next()) {
+            Grade selectedGrade = grade.getList().get(0);
+            int selectedGradeId = selectedGrade.getId();
+            System.out.println("Selected grade: " + selectedGradeId);
+          }
+        }
+      });
     }
-    availableCoursesTable.setItems(availableCoursesList);
 
-    // my dandy enroll button 
-    Button enrollButton = new Button("Enroll");
-    enrollButton.setOnAction(e -> {
-      Course selectedCourse = availableCoursesTable.getSelectionModel().getSelectedItem();
-      if (selectedCourse != null) {
-        // enroll the user in the selected course
-        coursesList.add(selectedCourse);
-        coursesTable.refresh();
-        // removing the course from the available courses table
-        availableCoursesList.remove(selectedCourse);
-
-        System.out.println("Enrolled in course: " + selectedCourse.getName());
-      } else {
-        System.out.println("No course selected.");
+    gradesTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+      if (newSelection != null) {
+        selectedGrade = newSelection;
+        editGradeField.setText(String.valueOf(selectedGrade.getGrade()));
       }
     });
+  }
 
-    //creatung the vbox layout and adding the table and button to it
-    VBox vbox = new VBox(10,availableCoursesTable, enrollButton);
-    vbox.setStyle("-fx-padding: 10; -fx-background-color:rgb(244, 221, 180);");
+  @FXML
+  void saveGradeChanges(ActionEvent event) {
+    //
+  }
+
+  @FXML
+  void addCourse(ActionEvent event) {
+
+  }
+
+  @FXML
+  void drop(ActionEvent event) {
+
+    try {
+      FileUtil.delete(String.valueOf(selectedCourse.getId()), FileUtil.ENROLLMENTS_TABLE);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    coursesList.remove(selectedCourse);
+    coursesTable.refresh();
+
+    gradesList.clear();
+    gradesTable.refresh();
+    selectedCourse = null;
+
+  }
+
+  @FXML
+  void addGrade(ActionEvent event) {
+
+  }
+
+  @FXML
+  void deleteGrade(ActionEvent event) {
+    try {
+      FileUtil.delete(String.valueOf(selectedGrade.getId()), FileUtil.ASSIGNMENTS_TABLE);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    gradesList.remove(selectedGrade);
+    gradesTable.refresh();
+    editGradeField.clear();
+  }
+
+  @FXML
+  private void close(ActionEvent event) {
+    // close the window, makes sure to close the window that the button is in by
+    // getting the source of the event and getting the scene and window from that
+    Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene()
+        .getWindow();
+    stage.close();
   }
 }
 
 /*
- * TO DO 
- * make a second table that shows what courses the student is enrolled in after clicking the student 
- * make the course info button show the students grades and assignments for that course
- * link the search course button to the available courses table for that specific student
+ * List<String[]> grades = FileUtil.select(
+ * 1,
+ * String.valueOf(user.getId()),
+ * FileUtil.GRADES_TABLE
+ * );
  * 
+ * for (String[] grade : grades) { // this is how to access multiple results
+ * System.out.println("Course: " + grade[0]);
+ * }
  * 
- * 
+ * String firstGrade = grades.get(0)[0];
+ * System.out.println("First grade: " + firstGrade); // this is how to access a
+ * single result
  */
