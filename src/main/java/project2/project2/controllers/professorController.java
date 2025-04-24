@@ -148,6 +148,15 @@ public class professorController {
   }
 }
 
+/*
+ * TO DO 
+ * make a second table that shows what courses the student is enrolled in after clicking the student 
+ * make the course info button show the students grades and assignments for that course
+ * link the search course button to the available courses table for that specific student
+ * 
+ * 
+ * 
+ */
   
 
 /*
