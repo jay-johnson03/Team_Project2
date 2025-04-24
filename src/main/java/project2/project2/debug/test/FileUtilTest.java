@@ -1,12 +1,16 @@
 package project2.project2.debug.test;
 
 import org.junit.jupiter.api.*;
+
+import project2.classes.User;
 import project2.project2.utils.FileUtil;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.function.Consumer;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FileUtilTest {
@@ -124,4 +128,13 @@ public class FileUtilTest {
 
             System.out.println("\nDelete test passed.");
         }
+        /* @Test
+        public static void logInCheck(String email, String password, Consumer<User> onSuccess, Runnable onFailure) {
+            try {
+                String [][] userData = select(2, email, USERS_TABLE);
+                if (userData.length == 0) {
+                    System.out.println("No account found with that email" + email);
+                }
+            }
+        } */
     }
