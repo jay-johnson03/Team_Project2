@@ -6,16 +6,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import project2.classes.Course;
@@ -82,8 +77,6 @@ public class professorController {
   @FXML
   private TableColumn<User, String> studentEmailColumn;
 
-  private User user;
-
   @FXML
   private TextField courseNameField;
 
@@ -93,6 +86,9 @@ public class professorController {
   @FXML
   private TextField assignmentNameField;
 
+  @FXML
+  private Button addGradeButton;
+
   private ObservableList<Course> coursesList =
     FXCollections.observableArrayList();
   private ObservableList<User> studentsList =
@@ -100,30 +96,35 @@ public class professorController {
   private ObservableList<Grade> gradesList =
     FXCollections.observableArrayList();
 
+  private User user;
   private Course selectedCourse;
   private User selectedStudent;
   private Grade selectedGrade;
 
+  /**
+   * Sets the logged-in user and initializes the courses table.
+   */
   public void setUser(User user) {
     this.user = user;
     initializeCoursesTable();
   }
 
+  /**
+   * Initializes the courses table with data for the logged-in professor.
+   */
   public void initializeCoursesTable() {
     welcomeLabel.setText(
       "Welcome Professor, " + user.getName() + " #" + user.getId()
     );
 
-    courseIdColumn.setCellValueFactory(
-      new PropertyValueFactory<Course, String>("id")
-    );
-    courseNameColumn.setCellValueFactory(
-      new PropertyValueFactory<Course, String>("name")
-    );
+    // Set up table columns
+    courseIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+    courseNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
     professorNameColumn.setCellValueFactory(
-      new PropertyValueFactory<Course, String>("professorId")
+      new PropertyValueFactory<>("professorId")
     );
 
+    // Populate courses list
     for (String[] course : user.getCourses()) {
       coursesList.add(
         new Course(
@@ -134,8 +135,10 @@ public class professorController {
       );
     }
 
+    // Load courses into the table
     coursesTable.setItems(coursesList);
 
+    // Add listener for course selection
     coursesTable
       .getSelectionModel()
       .selectedItemProperty()
@@ -147,9 +150,13 @@ public class professorController {
       });
   }
 
+  /**
+   * Initializes the students table for the selected course.
+   */
   private void initializeStudentsTable(int courseId) {
     studentsList.clear();
 
+    // Set up table columns
     studentIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
     studentNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
     studentEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -172,8 +179,10 @@ public class professorController {
       }
     }
 
+    // Load students into the table
     studentsTable.setItems(studentsList);
 
+    // Add listener for student selection
     studentsTable
       .getSelectionModel()
       .selectedItemProperty()
@@ -188,22 +197,23 @@ public class professorController {
       });
   }
 
+  /**
+   * Initializes the grades table for the selected course and student.
+   */
   public void initializeGradesTable(int courseId, int studentId) {
     gradesList.clear();
 
-    gradesCourseIdColumn.setCellValueFactory(
-      new PropertyValueFactory<Grade, String>("id")
-    );
+    // Set up table columns
+    gradesCourseIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
     gradesCourseNameColumn.setCellValueFactory(
-      new PropertyValueFactory<Grade, String>("userId")
+      new PropertyValueFactory<>("userId")
     );
     assignmentNameColumn.setCellValueFactory(
-      new PropertyValueFactory<Grade, String>("name")
+      new PropertyValueFactory<>("name")
     );
-    gradeColumn.setCellValueFactory(
-      new PropertyValueFactory<Grade, String>("grade")
-    );
+    gradeColumn.setCellValueFactory(new PropertyValueFactory<>("grade"));
 
+    // Load grades for the selected course and student
     String[][] gradesData = FileUtil.select(
       1,
       String.valueOf(courseId),
@@ -223,8 +233,10 @@ public class professorController {
       }
     }
 
+    // Load grades into the table
     gradesTable.setItems(gradesList);
 
+    // Add listener for grade selection
     gradesTable
       .getSelectionModel()
       .selectedItemProperty()
@@ -236,16 +248,19 @@ public class professorController {
       });
   }
 
+  /**
+   * Saves changes made to the selected grade.
+   */
   @FXML
   void saveGradeChanges(ActionEvent event) {
     if (selectedGrade == null) {
-      System.out.println("No grade selected.");
+      showAlert("No grade selected.", Alert.AlertType.WARNING);
       return;
     }
 
     String newGradeValue = editGradeField.getText();
     if (newGradeValue.isEmpty()) {
-      System.out.println("Grade value cannot be empty.");
+      showAlert("Grade value cannot be empty.", Alert.AlertType.WARNING);
       return;
     }
 
@@ -256,18 +271,21 @@ public class professorController {
         newGradeValue,
         FileUtil.ASSIGNMENTS_TABLE
       );
-
       selectedGrade.setGrade(Double.parseDouble(newGradeValue));
       gradesTable.refresh();
-
       editGradeField.clear();
-      System.out.println("Grade updated successfully.");
+      // showAlert("Grade updated successfully.", Alert.AlertType.INFORMATION);
     } catch (IOException e) {
-      System.out.println("Error updating grade.");
-      e.printStackTrace();
+      showAlert(
+        "Error updating grade: " + e.getMessage(),
+        Alert.AlertType.ERROR
+      );
     }
   }
 
+  /**
+   * Adds a new course to the professor's courses.
+   */
   @FXML
   void addCourse(ActionEvent event) {
     String courseName = courseNameField.getText();
@@ -275,19 +293,67 @@ public class professorController {
 
     // Ensure all required fields are provided
     if (courseName.isEmpty() || professorId.isEmpty()) {
-      System.out.println("Course name or professor ID cannot be empty.");
+      showAlert(
+        "Course name or professor ID cannot be empty.",
+        Alert.AlertType.WARNING
+      );
       return;
     }
 
-    String[] newCourse = { courseName, professorId };
+    try {
+      // Get the next available ID for the course
+      int nextCourseId = FileUtil.getNextId(FileUtil.COURSES_TABLE);
 
-    FileUtil.insert(newCourse, FileUtil.COURSES_TABLE);
+      // Create the new course entry
+      String[] newCourse = {
+        String.valueOf(nextCourseId),
+        courseName,
+        professorId,
+      };
 
-    coursesList.add(new Course(0, courseName, Integer.parseInt(professorId)));
-    coursesTable.refresh();
-    courseNameField.clear();
+      // Insert the new course into the table
+      FileUtil.insert(newCourse, FileUtil.COURSES_TABLE);
+
+      // Add the new course to the ObservableList
+      coursesList.add(
+        new Course(nextCourseId, courseName, Integer.parseInt(professorId))
+      );
+
+      // Refresh the table and clear the input field
+      coursesTable.refresh();
+      courseNameField.clear();
+      // showAlert("Course added successfully.", Alert.AlertType.INFORMATION);
+    } catch (Exception e) {
+      showAlert(
+        "Error adding course: " + e.getMessage(),
+        Alert.AlertType.ERROR
+      );
+    }
   }
 
+  /**
+   * Retrieves the next available ID for a given table.
+   */
+  public static int getNextId(String table) {
+    int id = 0;
+    try (BufferedReader reader = new BufferedReader(new FileReader(table))) {
+      String line;
+      while ((line = reader.readLine()) != null) {
+        String[] row = line.split(",");
+        try {
+          id = Math.max(id, Integer.parseInt(row[0]));
+        } catch (NumberFormatException ignored) {}
+      }
+    } catch (IOException e) {
+      System.err.println("Error retrieving next ID from table: " + table);
+      e.printStackTrace();
+    }
+    return id + 1;
+  }
+
+  /**
+   * Drops the selected course from the professor's courses.
+   */
   @FXML
   void drop(ActionEvent event) {
     if (selectedCourse == null) {
@@ -381,57 +447,9 @@ public class professorController {
     System.out.println("Course dropped successfully.");
   }
 
-  @FXML
-  void addGrade(ActionEvent event) {
-    if (selectedStudent == null || selectedCourse == null) {
-      System.out.println("No student or course selected.");
-      return;
-    }
-    String assignmentName = assignmentNameField.getText(); // Replace with input from UI
-    String[] newGrade = {
-      String.valueOf(selectedCourse.getId()),
-      String.valueOf(selectedStudent.getId()),
-      assignmentName,
-      "0",
-    };
-
-    FileUtil.insert(newGrade, FileUtil.ASSIGNMENTS_TABLE);
-
-    initializeGradesTable(selectedCourse.getId(), selectedStudent.getId());
-    System.out.println("Grade added successfully.");
-  }
-
-  @FXML
-  void deleteGrade(ActionEvent event) {
-    if (selectedGrade == null) {
-      System.out.println("No grade selected.");
-      return;
-    }
-
-    try {
-      FileUtil.delete(
-        String.valueOf(selectedGrade.getId()),
-        FileUtil.ASSIGNMENTS_TABLE
-      );
-
-      gradesList.remove(selectedGrade);
-      gradesTable.refresh();
-
-      editGradeField.clear();
-      System.out.println("Grade deleted successfully.");
-    } catch (IOException e) {
-      System.out.println("Error deleting grade.");
-      e.printStackTrace();
-    }
-  }
-
-  @FXML
-  private void close(ActionEvent event) {
-    Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene()
-      .getWindow();
-    stage.close();
-  }
-
+  /**
+   * Updates the selected student's information.
+   */
   @FXML
   public void updateStudent(ActionEvent event) {
     if (selectedStudent == null) {
@@ -465,5 +483,86 @@ public class professorController {
       System.out.println("Error updating student.");
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Adds a new grade for the selected student and course.
+   */
+  @FXML
+  void addGrade(ActionEvent event) {
+    if (selectedStudent == null || selectedCourse == null) {
+      showAlert("No student or course selected.", Alert.AlertType.WARNING);
+      return;
+    }
+
+    String assignmentName = assignmentNameField.getText();
+    if (assignmentName.isEmpty()) {
+      showAlert("Assignment name cannot be empty.", Alert.AlertType.WARNING);
+      return;
+    }
+
+    String[] newGrade = {
+      String.valueOf(selectedCourse.getId()),
+      String.valueOf(selectedStudent.getId()),
+      assignmentName,
+      "0",
+    };
+
+    try {
+      FileUtil.insert(newGrade, FileUtil.ASSIGNMENTS_TABLE);
+      initializeGradesTable(selectedCourse.getId(), selectedStudent.getId());
+      assignmentNameField.clear();
+      // showAlert("Grade added successfully.", Alert.AlertType.INFORMATION);
+    } catch (Exception e) {
+      showAlert("Error adding grade: " + e.getMessage(), Alert.AlertType.ERROR);
+    }
+  }
+
+  /**
+   * Deletes the selected grade.
+   */
+  @FXML
+  void deleteGrade(ActionEvent event) {
+    if (selectedGrade == null) {
+      showAlert("No grade selected.", Alert.AlertType.WARNING);
+      return;
+    }
+
+    try {
+      FileUtil.delete(
+        String.valueOf(selectedGrade.getId()),
+        FileUtil.ASSIGNMENTS_TABLE
+      );
+      gradesList.remove(selectedGrade);
+      gradesTable.refresh();
+      editGradeField.clear();
+      // showAlert("Grade deleted successfully.", Alert.AlertType.INFORMATION);
+    } catch (IOException e) {
+      showAlert(
+        "Error deleting grade: " + e.getMessage(),
+        Alert.AlertType.ERROR
+      );
+    }
+  }
+
+  /**
+   * Displays an alert dialog with the specified message and type.
+   * @param message The message to display.
+   * @param alertType The type of alert.
+   */
+  private void showAlert(String message, Alert.AlertType alertType) {
+    Alert alert = new Alert(alertType);
+    alert.setContentText(message);
+    alert.showAndWait();
+  }
+
+  /**
+   * Closes the application window.
+   */
+  @FXML
+  private void close(ActionEvent event) {
+    Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene()
+      .getWindow();
+    stage.close();
   }
 }

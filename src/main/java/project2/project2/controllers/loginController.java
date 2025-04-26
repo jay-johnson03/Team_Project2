@@ -63,9 +63,7 @@ public class loginController {
   }
   //
 
-  // open log in view with name passed in
   private void openHomeView(User user) {
-    // System.out.println("opening log in view");
     try {
       FXMLLoader loader;
       Stage stage = new Stage();
@@ -97,7 +95,6 @@ public class loginController {
     }
 
   }
-  //
 
   @FXML
   private void close(ActionEvent event) {
