@@ -99,7 +99,7 @@ public class homeController {
 
   // initializes the courses table with user data
   public void initializeCoursesTable() {
-    welcomeLabel.setText("Welcome, " + user.getName() + " #" + user.getId());
+    welcomeLabel.setText("Welcome Student, " + user.getName() + " #" + user.getId());
 
     // set columns
     courseIdColumn.setCellValueFactory(

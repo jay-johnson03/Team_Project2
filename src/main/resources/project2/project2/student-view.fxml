@@ -14,8 +14,7 @@
   <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
   </padding>
-  <Label>Student!!!!!!!!!!!!!!!!!!!!</Label>
-  <Label text="Welcome, [Name] #[ID]" fx:id="welcomeLabel"/>
+  <Label text="Welcome Student, [Name] #[ID]" fx:id="welcomeLabel"/>
   <children>
     <Button text="Close" fx:id="close" onAction="#close"/>
     <Label text="Courses" fx:id="coursesLabel"/>
@@ -43,18 +42,5 @@
         <TableColumn text="Grade" fx:id="gradeColumn" prefWidth="150.0"/>
       </columns>
     </TableView>
-    <HBox>
-      <Label>Add Assignment: </Label>
-      <TextField fx:id="assignmentNameField" promptText="Enter Assignment Name"/>
-      <Button text="Add" fx:id="addGradeButton" onAction="#addGrade"/>
-    </HBox>
-    <HBox>
-      <Label text="Edit Grade:"/>
-      <TextField fx:id="editGradeField" promptText="Grade"/>
-      <Button text="Save Changes" fx:id="saveGradeButton" onAction="#saveGradeChanges"/>
-    </HBox>
-    <HBox>
-      <Button text="Delete" fx:id="deleteGradeButton" onAction="#deleteGrade"/>
-    </HBox>
   </children>
 </VBox>

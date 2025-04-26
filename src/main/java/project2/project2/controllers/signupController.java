@@ -6,9 +6,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import project2.project2.utils.EncryptionUtil;
 import project2.project2.utils.FileUtil;
-import project2.project2.utils.HashingUtil;
 
 public class signupController {
 
